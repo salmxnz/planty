@@ -28,7 +28,7 @@ const SignIn = () => {
       <FormField title="Password" value={form.password} handleChangeText={(value) => setForm({ ...form, password: value })} placeholder="Enter your password" otherStyles="mt-7"/>
       <CustomButton
           title="Home"
-          containerStyles={`bg-secondary-200 rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
+          containerStyles={`bg-primary-dark dark:bg-primary-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
           handlePress={() => router.push("/home")}
           textStyles="text-white font-psemibold text-pregular text-[18px]"
           isLoading={false}

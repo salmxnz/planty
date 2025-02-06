@@ -4,15 +4,30 @@ module.exports = {
     "./app/**/*.{js,jsx,ts,tsx}",
     "./components/**/*.{js,jsx,ts,tsx}"
   ],
+  darkMode: 'class',
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
       colors: {
-        primary: "#161622",
+        primary: {
+          light: '#ffffff',
+          dark: '#000000',
+          DEFAULT: '#ffffff'
+        },
+        text: {
+          light: '#000000',
+          dark: '#ffffff',
+          DEFAULT: '#000000'
+        },
+        accent: {
+          light: '#568030',
+          dark: '#9FF16D',
+          DEFAULT: '#568030'
+        },
         secondary: {
+          light: "#FF9C01",
+          dark: "#FF9C01",
           DEFAULT: "#FF9C01",
-          100: "#FF9001",
-          200: "#FF8E01",
         },
         black: {
           DEFAULT: "#000",

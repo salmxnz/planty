@@ -5,5 +5,8 @@ import path from "../assets/images/path.png";
 import logo from "../assets/images/logo.png";
 import logoSmall from "../assets/images/logo-small.png";
 import empty from "../assets/images/empty.png";
+// import logoDark from "../assets/images/logo-dark.png";
+import onboarding_bg from "../assets/images/onboarding_bg.png";
+import vector_onboarding from "../assets/images/vector_onboarding.png";
 
-export default { profile, thumbnail, cards, path, logo, logoSmall, empty };
+export default { profile, thumbnail, cards, path, logo, logoSmall, empty, onboarding_bg, vector_onboarding };

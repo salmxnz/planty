@@ -1,42 +1,68 @@
-import { Text, TouchableOpacity, View, ImageSourcePropType, Image, FlatListComponent} from "react-native";
+import {
+  Text,
+  TouchableOpacity,
+  View,
+  ImageSourcePropType,
+  Image,
+  FlatListComponent,
+} from "react-native";
 import { Link } from "expo-router";
-import { SafeAreaView} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native-gesture-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { StatusBar } from "expo-status-bar";
-import { Redirect, router } from "expo-router"; 
-import {images}  from "../constants";
+import { Redirect, router } from "expo-router";
+import { images } from "../constants";
 import CustomButton from "@/components/CustomButton";
-
 
 export default function Index() {
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <GestureHandlerRootView>
-      <ScrollView contentContainerStyle={{ height: '100%' }}>
-        <View className="w-full min-h-[85vh] items-center justify-center px-4">
-        <Image source={images.logo} className="w-[130px] h-[84px]" resizeMode="contain" />
-        <Image source={images.cards} className="max-w-[380px] h-[300px] w-full" resizeMode="contain" ></Image>
-        
-        <View className="relative mt-5"> 
-          <Text className="text-white text-center font-pbold text-3xl">Discover Endless possibilities with
-          <Text className="text-secondary-200"> Aora</Text>
-          </Text>
-        <Image source={images.path} className="w-[136px] h-[15px] absolute -bottom-2 -right-9" resizeMode="contain" ></Image>
-        </View>
-        <Text className="text-gray-100 mt-7 text-center font-pregular">Where creativity meets creation: embark on a journey with limitless exploration</Text>
-        <CustomButton
-          title="Get Started"
-          containerStyles={`bg-secondary-200 rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
-          handlePress={() => router.push("/sign-in")}
-          textStyles="text-white font-psemibold text-pregular text-[18px]"
-          isLoading={false}
-        />
-        </View>
-      </ScrollView>
+    <SafeAreaView className="flex-1 light:bg-primary-light dark:bg-primary-dark" edges={['bottom']}>
+      <GestureHandlerRootView className="flex-1">
+        {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}> */}
+          <View className="absolute inset-0">
+            <Image
+              source={images.onboarding_bg}
+              className="w-full h-full absolute"
+              resizeMode="cover"
+            />
+            <Image
+              source={images.vector_onboarding}
+              className="w-[52vh] h-[60vh] absolute -bottom-12 left-[55%] -translate-x-1/2"
+              resizeMode="cover"
+            />
+          </View>
+          <View className="w-full h-full justify-end pb-24 px-4">
+            <View className="">
+              <View className="relative">
+                <View className="flex flex-col items-center">
+                  <Text className="text-white dark:text-white text-center font-pbold text-5xl leading-[60px] pt-2 flex-row items-center">
+                    Plant a tree{" "}
+                    <Text className="text-accent-light dark:text-accent-dark">
+                      &
+                    </Text>
+                  </Text>
+                  <Text className="text-white dark:text-white text-center font-pbold text-4xl pt-1">
+                    grow your community
+                  </Text>
+                </View>
+              </View>
+              <Text className="text-gray-200 opacity-80 text-center font-pmedium text-[18px] pt-4 pb-6">
+                Where creativity meets creation: embark on a journey with
+                limitless possibilities.
+              </Text>
+              <CustomButton
+                title="Get Started"
+                containerStyles="bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 w-full"
+                handlePress={() => router.push("/sign-in")}
+                textStyles="text-white dark:text-black font-psemibold text-pregular text-[18px]"
+                isLoading={false}
+              />
+            </View>
+          </View>
+        {/* </ScrollView> */}
 
-      <StatusBar style="light" backgroundColor="#161622" />
-
+        <StatusBar style="dark" backgroundColor="#161622" />
       </GestureHandlerRootView>
     </SafeAreaView>
   );

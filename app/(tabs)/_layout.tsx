@@ -3,6 +3,7 @@ import { Text, View, Image, ImageSourcePropType } from "react-native";
 import { Tabs } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import MaskedView from '@react-native-masked-view/masked-view';
+import { useColorScheme } from 'react-native';
 
 import { icons } from "../../constants";
 
@@ -67,24 +68,26 @@ const TabIcon = ({ icon, color, focused, name }: TabIconProps) => {
 };
 
 const TabsLayout = () => {
+  const colorScheme = useColorScheme();
   return (
     <>
       <Tabs
         screenOptions={{
+          headerShown: false,
           tabBarShowLabel: false,
           tabBarActiveTintColor: "#558e32",
           tabBarInactiveTintColor: "#CDCDE0",
           tabBarStyle: {
-            backgroundColor: "#FFFFFF",
+            backgroundColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
             height: 112,
             borderTopWidth: 25,
-            borderTopColor: "#FFFFFF",
+            borderTopColor: colorScheme === 'dark' ? '#000000' : '#FFFFFF',
             borderRadius: 18,
             position: "absolute",
             bottom: 0,
             left: 0,
             right: 0,
-            shadowColor: "rgba(115,155,97,0.10)",
+            shadowColor: colorScheme === 'dark' ? "rgba(250,250,250,0.15)" : "rgba(115,155,97,0.10)",
             shadowOffset: {
               width: 0,
               height: -10,
@@ -99,7 +102,6 @@ const TabsLayout = () => {
           name="home"
           options={{
             title: "Home",
-            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.home2}
@@ -114,7 +116,6 @@ const TabsLayout = () => {
           name="explore"
           options={{
             title: "Explore",
-            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.explore}
@@ -128,7 +129,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="identify"
           options={{
-            headerShown: false,
+            title: "Identify",
             tabBarIcon: () => <CenterButton />,
           }}
         />
@@ -136,7 +137,6 @@ const TabsLayout = () => {
           name="care"
           options={{
             title: "Care",
-            headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.care}
@@ -150,8 +150,7 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="profile"
           options={{
-            // title: "Profile",
-            headerShown: false,
+            title: "Profile",
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.profile1}

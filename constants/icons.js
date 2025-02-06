@@ -16,8 +16,10 @@ import profile1 from "../assets/icons/profile1.png";
 import care from "../assets/icons/care.png";
 import explore from "../assets/icons/explore.png";
 import home2 from "../assets/icons/home2.png";
+import rightarrow from "../assets/icons/arrow-right.png";
 
 export default {
+  rightarrow,
   home2,
   profile1,
   care,

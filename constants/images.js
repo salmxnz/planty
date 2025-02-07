@@ -8,7 +8,7 @@ import empty from "../assets/images/empty.png";
 // import logoDark from "../assets/images/logo-dark.png";
 import onboarding_bg from "../assets/images/onboarding_bg.png";
 import vector_onboarding from "../assets/images/vector_onboarding.png";
-
+import profileExample from "../assets/images/profile-example.jpg";
 //plants
 
 import peperomia from "../assets/images/plants/peperomia-1.png";
@@ -21,4 +21,4 @@ import peperomia from "../assets/images/plants/peperomia-1.png";
 // import succulent from "../assets/images/plants/succulent.png";
 // import tarragon from "../assets/images/tarragon.png";
 
-export default { profile, thumbnail, cards, path, logo, logoSmall, empty, onboarding_bg, vector_onboarding, peperomia};
+export default { profile, profileExample, thumbnail, cards, path, logo, logoSmall, empty, onboarding_bg, vector_onboarding, peperomia};

@@ -17,8 +17,12 @@ import care from "../assets/icons/care.png";
 import explore from "../assets/icons/explore.png";
 import home2 from "../assets/icons/home2.png";
 import rightarrow from "../assets/icons/arrow-right.png";
+import message from "../assets/icons/message.png";
+// import notification from "../assets/icons/notification.png";
 
 export default {
+  // notification,
+  message,
   rightarrow,
   home2,
   profile1,

@@ -11,7 +11,7 @@ const SphereButton = () => {
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           className="w-9 h-9 rounded-full"
-          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, borderRadius: 50, width: 40, height: 40, alignItems: "center", justifyContent: "center" }}
+          style={{ shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84, borderRadius: 50, width: 35, height: 35 , alignItems: "center", justifyContent: "center" }}
         >
           <Image
             source={icons.rightarrow}

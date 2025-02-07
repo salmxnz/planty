@@ -3,11 +3,13 @@ import React from 'react'
 import SphereButton from './sphere'
 import { NavigationContainer } from '@react-navigation/native'
 import { images } from '@/constants/index'
+import { TouchableOpacity } from 'react-native'
 
 const ProductCard = () => {
     return (
         <NavigationContainer>
-        <View className="w-[47%] h-[30vh] relative bg-white dark:bg-primary-dark rounded-[18px] overflow-hidden">
+        <TouchableOpacity className='w-[53vw] h-[30vh] relative bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden'>
+        {/* <View className="w-[47%] h-[30vh] relative bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden"> */}
             <View className="mt-5 mb-2">
                 <Image
                 source={images.peperomia}
@@ -23,7 +25,8 @@ const ProductCard = () => {
             <View className="absolute bottom-4 right-4">
                 <SphereButton />
             </View>
-        </View>
+        {/* </View> */}
+        </TouchableOpacity>
         </NavigationContainer>
     )
 }

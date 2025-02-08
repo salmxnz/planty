@@ -10,11 +10,11 @@ Planty is an AI-powered Android and iOS application built with React Native and 
 
 ## Screenshots & Demo (to be listed soon)
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-<img src="assets/screenshots/onboarding.png" width="300" height="600" alt="Onboarding">
-<img src="assets/screenshots/homepage_light.png" width="300" height="600" alt="Home Page Light Mode (not yet finished)">
-<img src="assets/screenshots/homepage_dark.jpeg" width="300" height="600" alt="Home Page Dark Mode (not yet finished)">
-![Plant Identification AI](assets/screenshots/classification.png)
-![Chat Bot](assets/screenshots/chatbot.png)
+<img src="assets/screenshots/onboarding.png" width="300" height="700" alt="Onboarding">
+<img src="assets/screenshots/homepage_light.png" width="300" height="700" alt="Home Page Light Mode (not yet finished)">
+<img src="assets/screenshots/homepage_dark.jpeg" width="300" height="700" alt="Home Page Dark Mode (not yet finished)">
+//![Plant Identification AI](assets/screenshots/classification.png)
+//![Chat Bot](assets/screenshots/chatbot.png)
 </div>
 
 

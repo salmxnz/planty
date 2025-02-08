@@ -8,7 +8,7 @@ import { images } from '@/constants'
 import SearchBar from '@/components/SearchBar'
 import { useState } from 'react'
 import ProductCategories from '@/components/ProductCategories'
-
+import { StatusBar } from 'expo-status-bar'
 const Home = () => {
 
     const [searchTerm, setSearchTerm] = useState('')
@@ -74,6 +74,7 @@ const Home = () => {
                         </View>
                     </View>
                 </ScrollView>
+                <StatusBar style="light" backgroundColor="#161622" />
             </GestureHandlerRootView>
         </SafeAreaView>
     )

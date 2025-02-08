@@ -9,7 +9,7 @@ Planty is an AI-powered Android and iOS application built with React Native and 
 - 🔥 **React Native & Supabase**: Uses React Native for the frontend and Supabase for authentication and database.
 
 ## Screenshots & Demo (to be listed soon)
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center;">
 <img src="assets/screenshots/onboarding.png" width="300" height="625" alt="Onboarding">
 <img src="assets/screenshots/homepage_light.png" width="300" height="625" alt="Home Page Light Mode (not yet finished)">
 <img src="assets/screenshots/homepage_dark.jpeg" width="300" height="625" alt="Home Page Dark Mode (not yet finished)">

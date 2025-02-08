@@ -1,50 +1,69 @@
-# Welcome to your Expo app 👋
+# Planty
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Planty is an AI-powered Android and iOS application built with React Native and Expo. It includes image classification to identify plants and a chatbot to provide plant care advice.
 
-## Get started
+## Features
+- 🌱 **Plant Identification**: Take a photo of a plant, and the app will classify it.
+- 🤖 **AI Chatbot**: Ask plant-related questions and receive AI-powered responses.
+- 📱 **Cross-Platform**: Available on both Android and iOS.
+- 🔥 **React Native & Supabase**: Uses React Native for the frontend and Supabase for authentication and database.
 
-1. Install dependencies
+## Screenshots & Demo (to be listed soon)
+![Onboarding](assets/screenshots/onboarding.png)
+![Home Page Light Mode (not yet finished)](assets/screenshots/homepage_light.png)
+![Home Page Dark (not yet finished)](assets/screenshots/homepage_dark.jpeg)
+![Plant Identification AI](assets/screenshots/classification.png)
+![Chat Bot](assets/screenshots/chatbot.png)
 
-   ```bash
-   npm install
-   ```
 
-2. Start the app
 
-   ```bash
-    npx expo start
-   ```
+## Installation & Setup
 
-In the output, you'll find options to open the app in a
+### Prerequisites
+- Node.js (Latest LTS recommended)
+- Expo CLI
+- Android Studio & Xcode (for Android and iOS development)
+- Supabase account
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+### Clone the Repository
+```sh
+git clone https://github.com/yourusername/planty.git
+cd planty
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Install Dependencies
+```sh
+npm install
+# or
+yarn install
+```
 
-## Learn more
+### Setting up Supabase
+1. Create a Supabase project at [supabase.com](https://supabase.com/)
+2. Navigate to **Settings > API** and copy the **Project URL** and **Anon Key**.
+3. Set up authentication and database tables for storing user data and plant classification results.
 
-To learn more about developing your project with Expo, look at the following resources:
+### Environment Variables
+Create a `.env.local` file in the root directory and add the following:
+```sh
+SUPABASE_URL=your-supabase-url
+SUPABASE_ANON_KEY=your-supabase-anon-key
+OPENAI_API_KEY=your-openai-api-key # If using OpenAI for chatbot
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Running the App
+```sh
+npx expo start
+```
 
-## Join the community
+## Deployment
+### Building for Production
+#### Android APK/Bundle
+```sh
+npx expo export && eas build -p android
+```
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+#### iOS Release
+```sh
+npx expo export && eas build -p ios
+```

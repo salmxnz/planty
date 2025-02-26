@@ -1,9 +1,19 @@
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React from 'react'
 
-const ProductCategories = () => {
-    const categories = ['Popular', 'Indoor', 'Outdoor', 'Fruits', 'Vegetables']
-    const [activeCategory, setActiveCategory] = useState('Popular')
+interface Category {
+    id: string;
+    name: string;
+    slug: string;
+}
+
+interface Props {
+    categories: Category[]
+    activeCategory: string
+    setActiveCategory: (categoryId: string) => void
+}
+
+const ProductCategories = ({ categories, activeCategory, setActiveCategory }: Props) => {
     // zustand global state management ?? or local state and pass to product category??
     return (
         <View>
@@ -15,15 +25,15 @@ const ProductCategories = () => {
             >
                 {categories.map((category) => (
                     <TouchableOpacity
-                        key={category}
-                        onPress={() => setActiveCategory(category)}
+                        key={category.id}
+                        onPress={() => setActiveCategory(category.id)}
                         className="pb-2"
                     >
                         <View className="items-center">
                             <Text className="text-gray-700 dark:text-primary-light text-2xl font-psemibold">
-                                {category}
+                                {category.name}
                             </Text>
-                            {activeCategory === category && (
+                            {activeCategory === category.id && (
                                 <View className="w-7 h-1 bg-accent-light dark:bg-accent-dark rounded-lg absolute -bottom-safe -bottom-2 self-center"></View>
                             )}
                         </View>

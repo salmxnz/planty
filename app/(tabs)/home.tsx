@@ -1,4 +1,4 @@
-import { View, Text, Image } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import ProductCard from '@/components/ProductCard'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -9,14 +9,36 @@ import SearchBar from '@/components/SearchBar'
 import { useState } from 'react'
 import ProductCategories from '@/components/ProductCategories'
 import { StatusBar } from 'expo-status-bar'
-const Home = () => {
+import CategorySection from '@/components/CategorySection'
+import { useAuth } from '@/context/AuthProvider'
+import { Redirect, router } from "expo-router";
 
+interface Category {
+    id: string;
+    name: string;
+    slug: string;
+}
+
+const Home = () => {
+    //categories
+    const [activeCategory, setActiveCategory] = useState<string>('1');
+    const categories: Category[] = [
+        { id: '1', name: 'Popular', slug: 'popular' },
+        { id: '2', name: 'Indoor', slug: 'indoor' },
+        { id: '3', name: 'Outdoor', slug: 'outdoor' },
+        { id: '4', name: 'Fruits', slug: 'fruits' },
+        { id: '5', name: 'Vegetables', slug: 'vegetables' },
+    ]
+//search
     const [searchTerm, setSearchTerm] = useState('')
+    const { session, username, website, avatarUrl } = useAuth()
+    console.log("Home component - username:", username)
+    console.log("Home component - session:", session?.user?.id)
 
     const handleChangeText = (text: string) => {
         setSearchTerm(text)
     }
-
+//display
     return (
         <SafeAreaView
             className="flex-1 bg-primary-light dark:bg-primary-dark"
@@ -28,7 +50,8 @@ const Home = () => {
                         <View className="flex flex-row items-center justify-between w-full px-6">
                             <View>
                                 <Text className="mb-2 text-gray-500 dark:text-gray-300 text-lg font-pregular">
-                                    Welcome YoMama300
+                                    Welcome {username || 'Guest'} 
+                                    {/* needs to be replaced with display name from profiles table*/}
                                 </Text>
                                 <Text className="text-primary-dark dark:text-white text-4xl font-psemibold">
                                     Let's find{' '}
@@ -42,35 +65,30 @@ const Home = () => {
                                     </Text>
                                 </View>
                             </View>
+                            <TouchableOpacity
+                            onPress={() => router.push("/screens/_profile")}
+                            >
                             <Image
                                 source={images.profileExample}
                                 className="w-[40px] h-[40px] rounded-full shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[0px_20px_25px_10px_rgba(250,250,250,0.15)]"
                                 resizeMode="cover"
                             />
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <View className="flex-1 mt-6 ml-6">
-                      <View className="mr-6">  
-                        <SearchBar
-                            value={searchTerm}
-                            handleChangeText={handleChangeText}
-                        />
+                        <View className="mr-6">
+                            <SearchBar
+                                value={searchTerm}
+                                handleChangeText={handleChangeText}
+                            />
                         </View>
                         <View className="mt-10">
-                           <ProductCategories /> 
+                            <ProductCategories categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>
                         </View>
                         <View className="mt-7 shadow-[5px_5px_9px_0px_rgba(0,0,0,0.16)] dark:shadow-[4px_4px_9px_0px_rgba(250,250,250,0.16)]">
-                        {/* <View className="mt-7 shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[5px_5px_7px_0px_rgba(250,250,250,0.16)]">*/}
-                          <ScrollView 
-                            horizontal 
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={{ gap: 23 }}
-                            className="flex-row"
-                          >
-                            <ProductCard />
-                            <ProductCard />
-                            <ProductCard />
-                          </ScrollView>
+                            {/* <View className="mt-7 shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[5px_5px_7px_0px_rgba(250,250,250,0.16)]">*/}
+                          <CategorySection activeCategory={activeCategory} /> 
                         </View>
                     </View>
                 </ScrollView>

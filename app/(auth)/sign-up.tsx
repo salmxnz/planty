@@ -8,13 +8,21 @@ import CustomButton from "@/components/CustomButton";
 import { router } from "expo-router";
 import { supabase } from '../../utils/supabase'
 import { images } from "../../constants";
+import { useAuth } from '@/context/AuthProvider'
+import { Redirect } from 'expo-router';
 
-const SignUp = () => {
+export default function SignUp() {
+  const { session } = useAuth();
   const [form, setForm] = useState({
     email: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Redirect to home if session exists
+  if (session) {
+    return <Redirect href="/(tabs)/home" />;
+  }
 
   const handleSignUp = async () => {
     try {
@@ -72,5 +80,3 @@ const SignUp = () => {
     </SafeAreaView>
   );
 };
-
-export default SignUp;

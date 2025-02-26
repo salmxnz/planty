@@ -12,6 +12,7 @@ import { StatusBar } from 'expo-status-bar'
 import CategorySection from '@/components/CategorySection'
 import { useAuth } from '@/context/AuthProvider'
 import { Redirect, router } from "expo-router";
+import DisplayPicture from '@/components/DisplayPicture'
 
 interface Category {
     id: string;
@@ -34,10 +35,11 @@ const Home = () => {
     const { session, username, website, avatarUrl } = useAuth()
     console.log("Home component - username:", username)
     console.log("Home component - session:", session?.user?.id)
-
+    console.log("Home component - avatarUrl:", avatarUrl)
     const handleChangeText = (text: string) => {
         setSearchTerm(text)
     }
+    
 //display
     return (
         <SafeAreaView
@@ -68,11 +70,12 @@ const Home = () => {
                             <TouchableOpacity
                             onPress={() => router.push("/screens/_profile")}
                             >
-                            <Image
-                                source={images.profileExample}
-                                className="w-[40px] h-[40px] rounded-full shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[0px_20px_25px_10px_rgba(250,250,250,0.15)]"
+                            {/* <Image
+                                source={{uri: avatarUrl}}
+                                className="w-[40px] h-[40px] rounded-full bg-white shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[0px_20px_25px_10px_rgba(250,250,250,0.15)]"
                                 resizeMode="cover"
-                            />
+                            /> */}
+                            <DisplayPicture url={avatarUrl} size={40} />
                             </TouchableOpacity>
                         </View>
                     </View>

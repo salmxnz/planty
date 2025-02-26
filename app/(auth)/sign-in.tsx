@@ -9,13 +9,19 @@ import { router } from "expo-router";
 import { supabase } from '../../utils/supabase'
 import { images } from "../../constants";
 import { TouchableOpacity } from "react-native";
-
+import { useAuth } from '@/context/AuthProvider'
 const SignIn = () => {
+  const { session } = useAuth();
   const [form, setForm] = useState({
     email: '',
     password: ''
   });
   const [loading, setLoading] = useState(false);
+
+  // Redirect to home if session exists
+  if (session) {
+    return router.replace("/(tabs)/home");
+  }
 
   const handleSignIn = async () => {
     try {

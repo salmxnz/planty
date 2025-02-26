@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUsername('')
     setWebsite('')
     setAvatarUrl('')
-    
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session: initialSession } }) => {
       console.log("Got initial session:", initialSession?.user?.id)

@@ -14,8 +14,16 @@ import { StatusBar } from "expo-status-bar";
 import { Redirect, router } from "expo-router";
 import { images } from "../constants";
 import CustomButton from "@/components/CustomButton";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function Index() {
+  const { session } = useAuth();
+
+  // Redirect to home if session exists
+  if (session) {
+    return <Redirect href="/(tabs)/home" />;
+  } 
+
   return (
     <SafeAreaView className="flex-1 light:bg-primary-light dark:bg-primary-dark" edges={['bottom']}>
       <GestureHandlerRootView className="flex-1">

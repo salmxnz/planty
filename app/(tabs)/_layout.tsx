@@ -62,7 +62,7 @@ const TabIcon = ({ icon, color, focused, name }: TabIconProps) => {
                     }
                 >
                     <LinearGradient
-                        colors={['#A6FB72', '#3B6C1E']}
+                        colors={['#A6FB72', '#88CF5D']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={{
@@ -110,7 +110,7 @@ const TabsLayout = () => {
                         right: 0,
                         shadowColor:
                             colorScheme === 'dark'
-                                ? 'rgba(250,250,250,0.15)'
+                                ? 'rgba(250,250,250,0.09)'
                                 : 'rgba(115,155,97,0.10)',
                         shadowOffset: {
                             width: 0,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabase'
 import { StyleSheet, View, Image } from 'react-native'
-
+import { images } from '@/constants'
 interface Props {
   size?: number
   url: string | null
@@ -38,7 +38,7 @@ export default function DisplayPicture({ url, size = 40, className }: Props) {
   return (
     <View>
       <Image
-        source={{ uri: avatarUrl || undefined }}
+        source={avatarUrl ? { uri: avatarUrl } : images.profile}
         className={className || "w-[40px] h-[40px] rounded-full bg-white shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[0px_20px_25px_10px_rgba(250,250,250,0.15)]"}
         style={{ width: size, height: size }}
         resizeMode="cover"

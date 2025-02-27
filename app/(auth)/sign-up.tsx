@@ -1,4 +1,4 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
@@ -44,7 +44,7 @@ export default function SignUp() {
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary dark:bg-primary-dark h-full">
       <GestureHandlerRootView>
         <ScrollView>
           <View className="w-full min-h-full px-4 my-6">
@@ -68,11 +68,17 @@ export default function SignUp() {
             />
             <CustomButton
               title="Sign Up"
-              containerStyles={`bg-primary-dark dark:bg-primary-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
+              containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
               handlePress={handleSignUp}
-              textStyles="text-white font-psemibold text-pregular text-[18px]"
+              textStyles="text-white dark:text-primary-dark font-psemibold text-pregular text-[18px]"
               isLoading={loading}
             />
+            <View className="flex-row items-center justify-center mt-10">
+              <Text className="text-black dark:text-white text-pregular text-base">Already have an account? </Text>
+              <TouchableOpacity onPress={() => router.replace("/sign-in")}>
+                <Text className="text-accent-light dark:text-accent-dark text-pregular text-base font-pmedium">Sign in</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </GestureHandlerRootView>

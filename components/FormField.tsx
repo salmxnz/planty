@@ -14,10 +14,10 @@ interface FormFieldProps {
 const FormField = ({title, value, handleChangeText, placeholder, otherStyles, keyboardType, secureTextEntry, ...props}: FormFieldProps) => {
   return (
     <View className={`space-y-2 ${otherStyles}`}>
-      <Text className={`text-base text-gray-600 dark:text-gray-400 font-pmedium`}>{title}</Text>
-      <View  className="w-full h-16 bg-black-100 dark:bg-black-200 border-2 border-black-200 rounded-2xl focus:border-secondary-200  ">
+      <Text className={`text-base mb-1.5 text-gray-600 dark:text-gray-400 font-pmedium`}>{title}</Text>
+      <View  className="w-full h-16 bg-gray-200 dark:bg-black-200 border-2 border-gray-200 dark:border-black-200 rounded-2xl focus:border-secondary-200  ">
       <TextInput
-        className={`flex-1 rounded-lg text-white px-4`}
+        className={`flex-1 rounded-lg text-white px-4 items-center`}
         value={value}
         onChangeText={handleChangeText}
         placeholder={placeholder}

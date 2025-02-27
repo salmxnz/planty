@@ -11,7 +11,7 @@ interface SearchBarProps {
 
 const SearchBar = ({ value, handleChangeText }: SearchBarProps) => {
     return (
-        <View className="flex-row items-center bg-[#eeeeee] dark:bg-[#1b1b1d] rounded-2xl py-5 px-4">
+        <View className="flex-row items-center bg-[#eeeeee] dark:bg-[#1b1b1d] rounded-2xl w-full h-16 max-h-16 px-4">
             <View>
                 <MaskedView
                     maskElement={

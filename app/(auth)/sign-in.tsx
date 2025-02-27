@@ -43,7 +43,7 @@ const SignIn = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full">
+    <SafeAreaView className="bg-primary dark:bg-primary-dark h-full">
       <GestureHandlerRootView>
         <ScrollView>
           <View className="w-full min-h-full px-4 my-6">
@@ -67,9 +67,9 @@ const SignIn = () => {
             />
             <CustomButton
               title="Sign In"
-              containerStyles={`bg-primary-dark dark:bg-primary-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
+              containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
               handlePress={handleSignIn}
-              textStyles="text-white font-psemibold text-pregular text-[18px]"
+              textStyles="text-white dark:text-primary-dark font-psemibold text-pregular text-[18px]"
               isLoading={loading}
             />
             <View className="flex-row items-center justify-center mt-10">

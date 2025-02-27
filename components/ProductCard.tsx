@@ -8,7 +8,7 @@ import { TouchableOpacity } from 'react-native'
 const ProductCard = () => {
     return (
         <NavigationContainer>
-        <TouchableOpacity className='w-[53vw] h-[30vh] relative bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden'>
+        <TouchableOpacity className='w-[53vw] max-w-[53vw] h-[30vh] max-h-[30vh] relative bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden'>
         {/* <View className="w-[47%] h-[30vh] relative bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden"> */}
             <View className="mt-5 mb-2">
                 <Image
@@ -18,7 +18,7 @@ const ProductCard = () => {
                 />
             </View>
             <View>
-            <Text className="text-xl font-semibold font-pmedium w-[100px] left-[14px] top-[21vh] text-primary-dark dark:text-primary-light">
+            <Text className="text-[16px] font-semibold font-pmedium w-[100px] max-w-[100px] left-[14px] top-[20.3vh] text-primary-dark dark:text-primary-light">
                 Peperomia Houseplant
             </Text>
             </View>

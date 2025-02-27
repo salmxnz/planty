@@ -4,7 +4,6 @@ import ProductCard from '@/components/ProductCard'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { ScrollView } from 'react-native'
-import { images } from '@/constants'
 import SearchBar from '@/components/SearchBar'
 import { useState } from 'react'
 import ProductCategories from '@/components/ProductCategories'
@@ -48,12 +47,11 @@ const Home = () => {
         >
             <GestureHandlerRootView className="flex-1">
                 <ScrollView contentContainerStyle={{ height: '100%' }}>
-                    <View className="w-full h-[18vh] bg-primary-light dark:bg-primary-dark justify-end ">
+                    <View className="w-full h-[19vh] bg-primary-light dark:bg-primary-dark justify-end ">
                         <View className="flex flex-row items-center justify-between w-full px-6">
                             <View>
                                 <Text className="mb-2 text-gray-500 dark:text-gray-300 text-lg font-pregular">
                                     Welcome {username || 'Guest'} 
-                                    {/* needs to be replaced with display name from profiles table*/}
                                 </Text>
                                 <Text className="text-primary-dark dark:text-white text-4xl font-psemibold">
                                     Let's find{' '}
@@ -86,11 +84,10 @@ const Home = () => {
                                 handleChangeText={handleChangeText}
                             />
                         </View>
-                        <View className="mt-10">
+                        <View className="mt-7">
                             <ProductCategories categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>
                         </View>
-                        <View className="mt-7 shadow-[5px_5px_9px_0px_rgba(0,0,0,0.16)] dark:shadow-[4px_4px_9px_0px_rgba(250,250,250,0.16)]">
-                            {/* <View className="mt-7 shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[5px_5px_7px_0px_rgba(250,250,250,0.16)]">*/}
+                        <View className="mt-7 shadow-[5px_5px_9px_0px_rgba(0,0,0,0.16)] dark:shadow-[0px_0px_2px_0px_rgba(250,250,250,0.2)]">
                           <CategorySection activeCategory={activeCategory} /> 
                         </View>
                     </View>

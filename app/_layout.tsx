@@ -5,8 +5,9 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AuthProvider } from '../context/AuthProvider';
+import { NavigationContainer } from '@react-navigation/native';
 
-SplashScreen.preventAutoHideAsync;
+SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
   const [fontsLoaded, error] = useFonts({
@@ -31,6 +32,7 @@ const RootLayout = () => {
   if (!fontsLoaded && !error) return null;
 
   return (
+    <NavigationContainer>
     <AuthProvider>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -40,6 +42,7 @@ const RootLayout = () => {
         <Stack.Screen name="screens" options={{ headerShown: false }} />
       </Stack>
     </AuthProvider>
+    </NavigationContainer>
   );  
 };
 

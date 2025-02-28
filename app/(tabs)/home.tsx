@@ -1,17 +1,18 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, BackHandler } from 'react-native'
 import React from 'react'
 import ProductCard from '@/components/ProductCard'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { ScrollView } from 'react-native'
+import { ScrollView} from 'react-native'
 import SearchBar from '@/components/SearchBar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ProductCategories from '@/components/ProductCategories'
 import { StatusBar } from 'expo-status-bar'
 import CategorySection from '@/components/CategorySection'
 import { useAuth } from '@/context/AuthProvider'
-import { Redirect, router } from "expo-router";
+import { router } from "expo-router";
 import DisplayPicture from '@/components/DisplayPicture'
+import Loading from '@/components/Loading'
 
 interface Category {
     id: string;
@@ -29,17 +30,51 @@ const Home = () => {
         { id: '4', name: 'Fruits', slug: 'fruits' },
         { id: '5', name: 'Vegetables', slug: 'vegetables' },
     ]
-//search
+    //search
     const [searchTerm, setSearchTerm] = useState('')
-    const { session, username, website, avatarUrl } = useAuth()
+    const { session, username, website, avatarUrl, isLoading} = useAuth()
+
+    // Enhanced authentication check with back handler
+    // useEffect(() => {
+    //     // Redirect to sign-in if not authenticated
+    //     if (!session && !isLoading) {
+    //         router.replace("/sign-in");
+    //         return;
+    //     }
+
+    //     // Handle back button press to prevent unauthorized access after logout
+    //     const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+    //         // If session is null (logged out), prevent going back
+    //         if (!session) {
+    //             router.replace("/sign-in");
+    //             return true; // Prevent default behavior
+    //         }
+    //         return false; // Let default behavior happen when authenticated
+    //     });
+
+    //     return () => backHandler.remove();
+    // }, [session, isLoading]);
+
+    // If still loading or no session, show loading screen
+    if (isLoading) {
+        return <Loading />;
+    }
+
+    // Double-check authentication before rendering protected content
+    if (!session) {
+        // This is a fallback in case the useEffect hasn't redirected yet
+        return <Loading />;
+    }
+
     console.log("Home component - username:", username)
     console.log("Home component - session:", session?.user?.id)
     console.log("Home component - avatarUrl:", avatarUrl)
+    
     const handleChangeText = (text: string) => {
         setSearchTerm(text)
     }
     
-//display
+    //display
     return (
         <SafeAreaView
             className="flex-1 bg-primary-light dark:bg-primary-dark"
@@ -68,11 +103,6 @@ const Home = () => {
                             <TouchableOpacity
                             onPress={() => router.push("/screens/_profile")}
                             >
-                            {/* <Image
-                                source={{uri: avatarUrl}}
-                                className="w-[40px] h-[40px] rounded-full bg-white shadow-[0px_20px_25px_10px_rgba(0,0,0,0.15)] dark:shadow-[0px_20px_25px_10px_rgba(250,250,250,0.15)]"
-                                resizeMode="cover"
-                            /> */}
                             <DisplayPicture url={avatarUrl} size={40} />
                             </TouchableOpacity>
                         </View>

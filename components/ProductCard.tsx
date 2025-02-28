@@ -1,35 +1,34 @@
-import { Text, View, Image } from 'react-native'
+import { Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import SphereButton from './sphere'
-import { NavigationContainer } from '@react-navigation/native'
 import { images } from '@/constants/index'
-import { TouchableOpacity } from 'react-native'
 
 const ProductCard = () => {
     return (
-        <NavigationContainer>
-        <TouchableOpacity className='w-[53vw] max-w-[53vw] h-[30vh] max-h-[30vh] relative bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden'>
-        {/* <View className="w-[47%] h-[30vh] relative bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden"> */}
-            <View className="mt-5 mb-2">
+        <TouchableOpacity className="w-[50vw] max-w-[300px] h-auto bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden p-4">
+            <View className="items-center">
                 <Image
-                source={images.peperomia}
-                className="w-[95%] h-[22vh] absolute"
-                resizeMode="contain"
+                    source={images.peperomia}
+                    className="w-full h-[22vh] max-h-[180px] rounded-md"
+                    resizeMode="contain"
                 />
             </View>
-            <View>
-            <Text className="text-[16px] font-semibold font-pmedium w-[100px] max-w-[100px] left-[14px] top-[20.3vh] text-primary-dark dark:text-primary-light">
-                Peperomia Houseplant
-            </Text>
+            <View className="flex-row justify-between items-start">
+                <View className="mt-3 flex-1 mr-2">
+                    <Text
+                        className="text-[16px] font-pmedium text-primary-dark dark:text-primary-light"
+                        numberOfLines={2}
+                        ellipsizeMode="tail"
+                    >
+                        Peperomia Houseplant TTTTTTTT TTTTTTT TTTTTTT
+                    </Text>
+                </View>
+                <View className="mt-3">
+                    <SphereButton />
+                </View>
             </View>
-            <View className="absolute bottom-4 right-4">
-                <SphereButton />
-            </View>
-        {/* </View> */}
         </TouchableOpacity>
-        </NavigationContainer>
     )
 }
 
 export default ProductCard
-

@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 import { supabase } from '../utils/supabase'
+import { router } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type AuthContextType = {
   session: Session | null
@@ -10,6 +12,7 @@ type AuthContextType = {
   website: string
   avatarUrl: string
   refreshProfile: () => Promise<void>
+  signOut: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   website: '',
   avatarUrl: '',
   refreshProfile: async () => {},
+  signOut: async () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -63,6 +67,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error instanceof Error) {
         console.log("Profile error:", error.message)
         Alert.alert(error.message)
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Secure sign out function that clears AsyncStorage and resets navigation
+  async function signOut() {
+    try {
+      setIsLoading(true)
+      
+      // Clear auth-related items from AsyncStorage
+      const keys = await AsyncStorage.getAllKeys()
+      const authKeys = keys.filter(
+        (key) => key.startsWith('supabase.auth') || key.includes('session')
+      )
+      
+      if (authKeys.length > 0) {
+        await AsyncStorage.multiRemove(authKeys)
+      }
+      
+      // Call supabase sign out
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+      
+      // Clear state
+      setSession(null)
+      setUsername('')
+      setWebsite('')
+      setAvatarUrl('')
+      
+
+      // Reset navigation to sign-in screen with a complete stack reset
+      // Use replace and navigation props to prevent back navigation
+      router.navigate({
+        pathname: '/(auth)/sign-in',
+        params: {},
+      })
+
+      // while (router.canGoBack()) { 
+      //   router.back();
+      //  }
+      //  router.replace('/(auth)/sign-in');
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Sign Out Error', error.message)
+      } else {
+        Alert.alert('Sign Out Error', 'An unknown error occurred')
       }
     } finally {
       setIsLoading(false)
@@ -117,7 +169,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       username, 
       website, 
       avatarUrl,
-      refreshProfile: () => getProfile()
+      refreshProfile: () => getProfile(),
+      signOut
     }}>
       {children}
     </AuthContext.Provider>

@@ -37,23 +37,17 @@ const SignIn = () => {
 
   //handle back button press
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     const onBackPress = () => true; // Prevents back action
-  //     const subscription = BackHandler.addEventListener(
-  //       "hardwareBackPress",
-  //       onBackPress
-  //     );
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => true; // Prevents back action
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
   
-  //     return () => subscription.remove();
-  //   }, [])
-  // );
-  //handle ios swipe back
-  // const navigation = useNavigation();
-  // useEffect(() => {
-  //   navigation.setOptions({ gestureEnabled: false });
-  // }, []);
-  
+      return () => subscription.remove();
+    }, [])
+  );
   
   if (isLoading) {
     return <Loading />;

@@ -10,9 +10,11 @@ import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
 import { Redirect, router } from 'expo-router'
 import { supabase } from '../../utils/supabase'
-import { images } from '../../constants'
 import { useAuth } from '@/context/AuthProvider'
 import Loading from '@/components/Loading'
+import { useFocusEffect } from '@react-navigation/native';
+import { BackHandler } from 'react-native';
+import { useCallback } from 'react';
 
 const SignUp = () => {
     const { session, isLoading } = useAuth()
@@ -23,6 +25,19 @@ const SignUp = () => {
         nameUser: '',
     })
     const [loading, setLoading] = useState(false)
+
+    useFocusEffect(
+        useCallback(() => {
+          const onBackPress = () => true; // Prevents back action
+          const subscription = BackHandler.addEventListener(
+            "hardwareBackPress",
+            onBackPress
+          );
+      
+          return () => subscription.remove();
+        }, [])
+      );
+      
 
     // Use useEffect for navigation instead of redirecting during render
     // useEffect(() => {

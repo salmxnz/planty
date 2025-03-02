@@ -20,10 +20,16 @@ import { useNavigation } from '@react-navigation/native';
 
 const SignIn = () => {
   const { session, isLoading } = useAuth();
-  const [form, setForm] = useState({
-    email: '',
-    password: ''
-  });
+  // Modify your SignIn component's form state:
+const [email, setEmail] = useState('');
+const [password, setPassword] = useState('');
+
+// Instead of using a combined form object
+// This prevents one field update from affecting another
+  // const [form, setForm] = useState({
+  //   email: '',
+  //   password: ''
+  // });
   const [loading, setLoading] = useState(false);
 
   // Use useEffect for navigation instead of redirecting during render
@@ -57,8 +63,8 @@ const SignIn = () => {
     try {
       setLoading(true);
       const { error } = await supabase.auth.signInWithPassword({
-        email: form.email,
-        password: form.password,
+        email: email,
+        password: password,
       });
 
       if (error) throw error;
@@ -72,48 +78,56 @@ const SignIn = () => {
     }
   };
 
+
+
   return (
-    <SafeAreaView className="bg-primary-light dark:bg-primary-dark h-full">
-      <GestureHandlerRootView>
-        <ScrollView>
-          <View className="w-full min-h-full px-4 my-6">
-            {/* <Image source={images.logo} className="w-[115px] h-[35px]" resizeMode="contain" /> */}
-            <View className="text-center items-center space-y-1 mt-32">
-              <Text className="text-accent-light dark:text-accent-dark text-4xl font-psemibold mb-3">Welcome back</Text>
-              <Text className="text-black dark:text-white text-base font-pregular">Log in to your account</Text>
-            </View>
-            <FormField 
-              imageIcon="account"
-              title="Email" 
-              value={form.email}
-              handleChangeText={(value) => setForm({ ...form, email: value })} 
-              placeholder="example@gmail.com" 
-              otherStyles="mt-7" 
-              keyboardType="email-address"
-            />
-            <FormField 
-              imageIcon="lock"
-              title="Password" 
-              value={form.password}
-              handleChangeText={(value) => setForm({ ...form, password: value })} 
-              placeholder="Enter your password" 
-              otherStyles="mt-7"
-              secureTextEntry
-            />
-            <View className="mt-8">
-              <CustomButton 
-              title="Sign In"
-              containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
-              handlePress={handleSignIn}
-              textStyles="text-white dark:text-primary-dark font-psemibold text-pregular text-[18px]"
-              isLoading={loading}
+    <SafeAreaView className="bg-primary-light dark:bg-primary-dark flex-1">
+      <GestureHandlerRootView className="flex-1">
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View className="flex-1 justify-center items-center px-6">
+            {/* <Image source={images.logo} className="w-[115px] h-[35px] self-center mb-8" resizeMode="contain" /> */}
+            <View className="w-full max-w-md">
+              <View className="items-center space-y-1 mb-8">
+                <Text className="text-accent-light dark:text-accent-dark text-4xl font-psemibold mb-2">Welcome back</Text>
+                <Text className="text-black dark:text-white text-base font-pregular">Log in to your account</Text>
+              </View>
+              <FormField 
+                imageIcon="account"
+                title="Email" 
+                value={email}
+                handleChangeText={(value) => setEmail(value)} 
+                placeholder="example@gmail.com" 
+                otherStyles="mb-5" 
+                keyboardType="email-address"
+                textContentType="emailAddress"
+                autoComplete="email"
               />
-            </View>
-            <View className="flex-row justify-center mt-4">
-              <Text className="text-gray-500 dark:text-gray-300 font-pregular">Don't have an account? </Text>
-              <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')}>
-                <Text className="text-accent-light dark:text-accent-dark font-psemibold">Sign Up</Text>
-              </TouchableOpacity>
+              <FormField
+                imageIcon="lock"
+                title="Password" 
+                value={password}
+                handleChangeText={(value) => setPassword(value)} 
+                placeholder="Enter your password" 
+                otherStyles="mb-6"
+                secureTextEntry
+                isPassword={true}
+                forgetPassword= {true}
+                textContentType="password"
+                autoComplete="password"
+              />
+              <CustomButton 
+                title={loading ? 'Loading...' : 'Login'}
+                containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 w-full`}
+                handlePress={handleSignIn}
+                textStyles="text-white dark:text-primary-dark font-psemibold text-pregular text-[18px]"
+                isLoading={loading}
+              />
+              <View className="flex-row justify-center mt-6">
+                <Text className="text-gray-500 dark:text-gray-300 font-pregular">Don't have an account? </Text>
+                <TouchableOpacity onPress={() => router.push('/(auth)/sign-up')}>
+                  <Text className="text-accent-light dark:text-accent-dark font-psemibold">Register</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </ScrollView>

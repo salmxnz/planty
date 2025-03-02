@@ -88,69 +88,75 @@ const SignUp = () => {
     }
 
     return (
-        <SafeAreaView className="bg-primary-light dark:bg-primary-dark h-full">
-            <GestureHandlerRootView>
-                <ScrollView>
-                    <View className="w-full min-h-full px-4 my-6 mt-20">
-                        {/* <Image source={images.logo} className="w-[115px] h-[35px]" resizeMode="contain" /> */}
-                        <View className="text-center items-center space-y-1 ">
-                            <Text className="text-accent-light dark:text-accent-dark text-4xl font-psemibold mb-3">
-                                Register
-                            </Text>
-                            <Text className="text-black dark:text-white text-base font-pregular">
-                                Create your account
-                            </Text>
-                        </View>
-                        <FormField
-                            imageIcon="account"
-                            title="Name"
-                            value={form.nameUser}
-                            handleChangeText={(value) =>
-                                setForm({ ...form, nameUser: value })
-                            }
-                            placeholder="John Doe"
-                            otherStyles="mt-7"
-                            keyboardType="default"
-                        />
-                        <FormField
-                            imageIcon="email"
-                            title="Email"
-                            value={form.email}
-                            handleChangeText={(value) =>
-                                setForm({ ...form, email: value })
-                            }
-                            placeholder="example@gmail.com"
-                            otherStyles="mt-6"
-                            keyboardType="email-address"
-                        />
-                        <FormField
-                            imageIcon="lock"
-                            title="Password"
-                            value={form.password}
-                            handleChangeText={(value) =>
-                                setForm({ ...form, password: value })
-                            }
-                            placeholder="Enter your password"
-                            otherStyles="mt-6"
-                            secureTextEntry
-                        />
-                        <FormField
-                            imageIcon="lock"
-                            title="Confirm Password"
-                            value={form.confirmPassword}
-                            handleChangeText={(value) =>
-                                setForm({ ...form, confirmPassword: value })
-                            }
-                            placeholder="Confirm your password"
-                            otherStyles="mt-6"
-                            secureTextEntry
-                        />
-                        <View className="mt-6">
+        <SafeAreaView className="bg-primary-light dark:bg-primary-dark flex-1">
+            <GestureHandlerRootView className="flex-1">
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    <View className="flex-1 justify-center items-center px-6">
+                        {/* <Image source={images.logo} className="w-[115px] h-[35px] self-center mb-8" resizeMode="contain" /> */}
+                        <View className="w-full max-w-md">
+                            <View className="items-center space-y-1 mb-8">
+                                <Text className="text-accent-light dark:text-accent-dark text-4xl font-psemibold mb-2">
+                                    Register
+                                </Text>
+                                <Text className="text-black dark:text-white text-base font-pregular">
+                                    Create your account
+                                </Text>
+                            </View>
+                            <FormField
+                                imageIcon="account"
+                                title="Name"
+                                value={form.nameUser}
+                                handleChangeText={(value) =>
+                                    setForm({ ...form, nameUser: value })
+                                }
+                                placeholder="John Doe"
+                                otherStyles="mb-5"
+                                keyboardType="default"
+                                textContentType="username"
+                            />
+                            <FormField
+                                imageIcon="email"
+                                title="Email"
+                                value={form.email}
+                                handleChangeText={(value) =>
+                                    setForm({ ...form, email: value })
+                                }
+                                placeholder="example@gmail.com"
+                                otherStyles="mb-5"
+                                keyboardType="email-address"
+                                textContentType="emailAddress"
+                            />
+                            <FormField
+                                imageIcon="lock"
+                                title="Password"
+                                value={form.password}
+                                handleChangeText={(value) =>
+                                    setForm({ ...form, password: value })
+                                }
+                                placeholder="Enter your password"
+                                otherStyles="mb-5"
+                                secureTextEntry
+                                isPassword={true}
+                                textContentType='password'
+                            />
+                            <FormField
+                                imageIcon="lock"
+                                title="Confirm Password"
+                                value={form.confirmPassword}
+                                handleChangeText={(value) =>
+                                    setForm({ ...form, confirmPassword: value })
+                                }
+                                placeholder="Confirm your password"
+                                otherStyles="mb-6"
+                                secureTextEntry
+                                isPassword={true}
+                                textContentType='password'
+                            />
                             <CustomButton
-                                title={loading ? 'Loading...' : 'Sign Up'}
+                                title={loading ? 'Loading...' : 'Register'}
                                 handlePress={handleSignUp}
                                 textStyles="text-white dark:text-primary-dark font-psemibold text-pregular text-[18px]"
-                                containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-7 w-full`}
+                                containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 w-full`}
                                 // disabled={
                                 //     !form.email ||
                                 //     !form.password ||
@@ -160,22 +166,23 @@ const SignUp = () => {
                                 //     loading
                                 // }
                             />
-                        </View>
-                        <View className="flex-row justify-center mt-4">
-                            <Text className="text-gray-500 dark:text-gray-300 font-pregular">
-                                Already have an account?{' '}
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() => router.push('/(auth)/sign-in')}
-                            >
-                                <Text className="text-accent-light dark:text-accent-dark font-psemibold">
-                                    Sign In
+                            <View className="flex-row justify-center mt-6">
+                                <Text className="text-gray-500 dark:text-gray-300 font-pregular">
+                                    Already have an account?{' '}
                                 </Text>
-                            </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => router.push('/(auth)/sign-in')}
+                                >
+                                    <Text className="text-accent-light dark:text-accent-dark font-psemibold">
+                                        Login
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </ScrollView>
             </GestureHandlerRootView>
+            <StatusBar style="light" backgroundColor="#161622" />
         </SafeAreaView>
     )
 }

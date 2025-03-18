@@ -20,7 +20,7 @@ const ProductCard = () => {
                         numberOfLines={2}
                         ellipsizeMode="tail"
                     >
-                        Peperomia Houseplant TTTTTTTT TTTTTTT TTTTTTT
+                        Peperomia Houseplant
                     </Text>
                 </View>
                 <View className="mt-3">

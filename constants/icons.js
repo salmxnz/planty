@@ -22,6 +22,7 @@ import send from "../assets/icons/send.png";
 import chatBubble from "../assets/icons/chat-bubble.png";
 import history from "../assets/icons/history.png";
 import trash from "../assets/icons/trash.png";
+import plantbot from "../assets/icons/plantbot.png";
 // import notification from "../assets/icons/notification.png";
 
 export default {
@@ -50,4 +51,5 @@ export default {
   chatBubble,
   history,
   trash,
+  plantbot,
 };

@@ -24,6 +24,7 @@ import * as FileSystem from 'expo-file-system'
 import { v4 as uuidv4 } from 'uuid'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useColorScheme } from 'react-native'
+import { Keyboard, Dimensions } from 'react-native'
 
 const newUUID = uuidv4()
 const genAI = new GoogleGenerativeAI(
@@ -50,10 +51,41 @@ const MessageScreen = () => {
     const { session } = useAuth()
     const [selectedImage, setSelectedImage] = useState<string | null>(null)
     const scrollViewRef = useRef<ScrollView>(null)
+    const [keyboardVisible, setKeyboardVisible] = useState(false)
+    const [keyboardHeight, setKeyboardHeight] = useState(0)
 
     const colorScheme = useColorScheme();
 
     const tintcolor = colorScheme === 'light' ? '#fff' : '#000'
+
+    useEffect(() => {
+        const keyboardWillShowListener = Keyboard.addListener(
+            Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+            (event) => {
+                setKeyboardVisible(true);
+                if (Platform.OS === 'android') {
+                    setKeyboardHeight(event.endCoordinates.height);
+                }
+                setTimeout(() => {
+                    scrollViewRef.current?.scrollToEnd({ animated: true });
+                }, Platform.OS === 'ios' ? 50 : 100);
+            }
+        );
+        const keyboardWillHideListener = Keyboard.addListener(
+            Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+            () => {
+                setKeyboardVisible(false);
+                if (Platform.OS === 'android') {
+                    setKeyboardHeight(0);
+                }
+            }
+        );
+
+        return () => {
+            keyboardWillShowListener.remove();
+            keyboardWillHideListener.remove();
+        };
+    }, []);
 
     useEffect(() => {
         console.log('Session in MessageScreen:', session)
@@ -459,6 +491,7 @@ const MessageScreen = () => {
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 className="flex-1"
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
             >
                 <TouchableWithoutFeedback
                     onPress={() => setIsHistoryOpen(false)}
@@ -499,8 +532,10 @@ const MessageScreen = () => {
                         <View className="flex-1">
                             <ScrollView
                                 ref={scrollViewRef}
-                                className="flex-1 p-4 pb-20"
-                                contentContainerStyle={{ paddingBottom: 100 }}
+                                className="flex-1 p-4"
+                                contentContainerStyle={{ 
+                                    paddingBottom: keyboardVisible ? 20 : 100 
+                                }}
                                 keyboardShouldPersistTaps="handled"
                                 showsVerticalScrollIndicator={true}
                             >
@@ -605,7 +640,7 @@ const MessageScreen = () => {
                                 )}
                             </ScrollView>
 
-                            <View className="absolute bottom-20 left-0 right-0 bg-primary-light dark:bg-primary-dark dark:border-gray-700 pt-4 pb-10 px-2 z-10">
+                            <View className={`absolute ${keyboardVisible ? 'bottom-0' : 'bottom-28'} left-0 right-0 bg-primary-light dark:bg-primary-dark pt-2 pb-2 px-2 z-10 border-t border-gray-200 dark:border-gray-700`} style={Platform.OS === 'android' && keyboardVisible ? { bottom: 0 } : {}}>
                                 <View className="flex-row items-center">
                                     <TouchableOpacity
                                         onPress={pickImage}

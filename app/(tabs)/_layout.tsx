@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import MaskedView from '@react-native-masked-view/masked-view'
 import { useColorScheme } from 'react-native'
 
-import { icons } from '../../constants'
+import { icons } from '../../constants/cameraIcon'
 
 interface TabIconProps {
     icon: ImageSourcePropType
@@ -34,7 +34,7 @@ const CenterButton = () => {
                 }}
             >
                 <Image
-                    source={icons.scan}
+                    source={require('../../assets/icons/scan.png')}
                     resizeMode="contain"
                     tintColor="#FFFFFF"
                     className="w-12 h-12"
@@ -86,108 +86,44 @@ const TabIcon = ({ icon, color, focused, name }: TabIconProps) => {
     )
 }
 
-const TabsLayout = () => {
-    const colorScheme = useColorScheme()
+export default function TabsLayout() {
     return (
-        <>
-            <Tabs
-                screenOptions={{
-                    headerShown: false,
-                    tabBarShowLabel: false,
-                    tabBarActiveTintColor: '#558e32',
-                    tabBarInactiveTintColor: '#CDCDE0',
-                    tabBarStyle: {
-                        backgroundColor:
-                            colorScheme === 'dark' ? '#000000' : '#FFFFFF',
-                        height: 112,
-                        borderTopWidth: 25,
-                        borderTopColor:
-                            colorScheme === 'dark' ? '#000000' : '#FFFFFF',
-                        borderRadius: 18,
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        shadowColor:
-                            colorScheme === 'dark'
-                                ? 'rgba(250,250,250,0.09)'
-                                : 'rgba(115,155,97,0.10)',
-                        shadowOffset: {
-                            width: 0,
-                            height: -10,
-                        },
-                        shadowOpacity: 1,
-                        shadowRadius: 19,
-                        elevation: 10,
-                    },
+        <Tabs screenOptions={{ headerShown: false }}>
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: 'Home',
+                    tabBarIcon: (props) => icons.index(props)
                 }}
-            >
-                <Tabs.Screen
-                    name="home"
-                    options={{
-                        title: 'Home',
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.home2}
-                                color={color}
-                                focused={focused}
-                                name="Home"
-                            />
-                        ),
-                    }}
-                />
-                <Tabs.Screen
-                    name="explore"
-                    options={{
-                        title: 'Explore',
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.explore}
-                                color={color}
-                                focused={focused}
-                                name="Explore"
-                            />
-                        ),
-                    }}
-                />
-                <Tabs.Screen
-                    name="identify"
-                    options={{
-                        title: 'Identify',
-                        tabBarIcon: () => <CenterButton />,
-                    }}
-                />
-                <Tabs.Screen
-                    name="message"
-                    options={{
-                        title: 'Message',
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.message}
-                                color={color}
-                                focused={focused}
-                                name="Message"
-                            />
-                        ),
-                    }}
-                />
-                <Tabs.Screen
-                    name="care"
-                    options={{
-                        title: 'Care',
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon
-                                icon={icons.care}
-                                color={color}
-                                focused={focused}
-                                name="Care"
-                            />
-                        ),
-                    }}
-                />
-            </Tabs>
-        </>
+            />
+            <Tabs.Screen
+                name="explore"
+                options={{
+                    title: 'Explore',
+                    tabBarIcon: (props) => icons.explore(props)
+                }}
+            />
+            <Tabs.Screen
+                name="identify"
+                options={{
+                    title: 'Identify',
+                    tabBarIcon: (props) => icons.takePhoto(props)
+                }}
+            />
+            <Tabs.Screen
+                name="plants"
+                options={{
+                    title: 'My Plants',
+                    tabBarIcon: (props) => icons.plants(props)
+                }}
+            />
+            <Tabs.Screen
+                name="settings"
+                options={{
+                    title: 'Settings',
+                    tabBarIcon: (props) => icons.settings(props)
+                }}
+            />
+        </Tabs>
     )
 }
-
-export default TabsLayout

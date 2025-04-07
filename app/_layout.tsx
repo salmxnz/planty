@@ -48,7 +48,7 @@ const RootLayout = () => {
           </Stack>
         </AuthProvider>
       </NavigationContainer>
-      <Slot />
+      
     </Provider>
   );  
 };

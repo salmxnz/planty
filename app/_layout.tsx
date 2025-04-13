@@ -6,6 +6,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AuthProvider } from '../context/AuthProvider';
 import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import { store } from '../store/store';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,17 +34,19 @@ const RootLayout = () => {
   if (!fontsLoaded && !error) return null;
 
   return (
-    <NavigationContainer>
-    <AuthProvider>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="screens" options={{ headerShown: false }} />
-      </Stack>
-    </AuthProvider>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <AuthProvider>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="screens" options={{ headerShown: false }} />
+          </Stack>
+        </AuthProvider>
+      </NavigationContainer>
+    </Provider>
   );  
 };
 

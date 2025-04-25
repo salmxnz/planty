@@ -9,8 +9,8 @@ interface Category {
 
 interface Props {
     categories: Category[]
-    activeCategory: string
-    setActiveCategory: (categoryId: string) => void
+    activeCategory: number
+    setActiveCategory: (categoryId: number) => void
 }
 
 const ProductCategories = ({ categories, activeCategory, setActiveCategory }: Props) => {
@@ -26,14 +26,14 @@ const ProductCategories = ({ categories, activeCategory, setActiveCategory }: Pr
                 {categories.map((category) => (
                     <TouchableOpacity
                         key={category.id}
-                        onPress={() => setActiveCategory(category.id)}
+                        onPress={() => setActiveCategory(Number(category.id))}
                         className="pb-2"
                     >
                         <View className="items-center">
                             <Text className="text-gray-700 dark:text-primary-light text-2xl font-psemibold">
                                 {category.name}
                             </Text>
-                            {activeCategory === category.id && (
+                            {activeCategory === Number(category.id) && (
                                 <View className="w-7 h-1 bg-accent-light dark:bg-accent-dark rounded-lg absolute -bottom-safe -bottom-2 self-center"></View>
                             )}
                         </View>

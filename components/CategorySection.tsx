@@ -1,9 +1,25 @@
 import { View, Text, ScrollView } from 'react-native'
 import React from 'react'
 import ProductCard from './ProductCard'
-// import { fetchProductsByCategory } from '../utils/data'
+// import { Plant } from '@/types'
 
-const CategorySection = ({ activeCategory }: { activeCategory: string }) => {
+interface Plant {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    image_url: string;
+    price: number;  
+    category_id: number;
+    stock_quantity: number;
+    care_level: string;
+    light_requirements: string;
+    water_frequency: string;
+    pet_friendly: boolean;
+    // category: Category;
+}
+
+const   CategorySection = ({ activeCategory, plants }: { activeCategory: number, plants: Plant[] }) => {
     // const products = fetchProductsByCategory(activeCategory)
 
     return (
@@ -17,12 +33,10 @@ const CategorySection = ({ activeCategory }: { activeCategory: string }) => {
             {/* {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
             ))} */}
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-            <ProductCard />
-        </ScrollView>
+            {plants.filter((plant) => plant.category_id === activeCategory).map((plant) => (
+                <ProductCard key={plant.id} product={plant} />
+            ))}
+        </ScrollView>   
     )
 }
 

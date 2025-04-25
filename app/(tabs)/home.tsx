@@ -13,23 +13,56 @@ import { useAuth } from '@/context/AuthProvider'
 import { router } from "expo-router";
 import DisplayPicture from '@/components/DisplayPicture'
 import Loading from '@/components/Loading'
+import { CategoriesFetch, PlantsFetch } from '@/api/supabaseFunctions'
 
+//define categories interface
 interface Category {
     id: string;
     name: string;
     slug: string;
 }
 
+//define plants interface
+interface Plant {
+    id: string;
+    name: string;
+    slug: string;
+    description: string;
+    image_url: string;
+    price: number;
+    category_id: number;
+    stock_quantity: number;
+    care_level: string;
+    light_requirements: string;
+    water_frequency: string;
+    pet_friendly: boolean;
+    // category: Category;
+}
+
+
 const Home = () => {
-    //categories
-    const [activeCategory, setActiveCategory] = useState<string>('1');
-    const categories: Category[] = [
-        { id: '1', name: 'Popular', slug: 'popular' },
-        { id: '2', name: 'Indoor', slug: 'indoor' },
-        { id: '3', name: 'Outdoor', slug: 'outdoor' },
-        { id: '4', name: 'Fruits', slug: 'fruits' },
-        { id: '5', name: 'Vegetables', slug: 'vegetables' },
-    ]
+    //categories fetch in main home component
+    const [activeCategory, setActiveCategory] = useState<number>(1);
+
+    const [categories, setCategories] = useState<Category[]>([]);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const categories = await CategoriesFetch();
+            setCategories(categories as Category[]);
+        };
+        fetchCategories();
+    }, []);
+
+    //plants fetch in main home component
+    const [plants, setPlants] = useState<Plant[]>([]);
+    useEffect(() => {
+        const fetchPlants = async () => {
+            const plants = await PlantsFetch();
+            setPlants(plants as Plant[]);
+        };
+        fetchPlants();
+    }, []);
+
     //search
     const [searchTerm, setSearchTerm] = useState('')
     const { session, username, website, avatarUrl, isLoading} = useAuth()
@@ -118,7 +151,7 @@ const Home = () => {
                             <ProductCategories categories={categories} activeCategory={activeCategory} setActiveCategory={setActiveCategory}/>
                         </View>
                         <View className="mt-7 shadow-[5px_5px_9px_0px_rgba(0,0,0,0.16)] dark:shadow-[0px_0px_2px_0px_rgba(250,250,250,0.2)]">
-                          <CategorySection activeCategory={activeCategory} /> 
+                          <CategorySection activeCategory={activeCategory} plants={plants} /> 
                         </View>
                     </View>
                 </ScrollView>

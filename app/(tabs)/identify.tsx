@@ -251,17 +251,19 @@ export default function CameraComponent() {
       setFacing((current) => (current === 'back' ? 'front' : 'back'))
   }, [])
 
-  const handleSavePicture = useCallback(() => {
-      if (picture?.uri) {
-          const pictureURI = picture.uri
-          if (previousScreen === 'addPlant') {
-              updateNewPlantImage(pictureURI)
-          } else {
-              updatePlantHealthCheckImage(pictureURI)
-          }
-          router.back()
-      }
-  }, [picture, updateNewPlantImage, updatePlantHealthCheckImage, previousScreen])
+  // const handleSavePicture = useCallback(() => {
+  //     if (picture?.uri) {
+  //         const pictureURI = picture.uri
+  //         if (previousScreen === 'addPlant') {
+  //             updateNewPlantImage(pictureURI)
+  //         } else {
+  //             updatePlantHealthCheckImage(pictureURI)
+  //         }
+  //         router.back()
+  //     }
+  // }, [picture, updateNewPlantImage, updatePlantHealthCheckImage, previousScreen])
+
+  const handleSavePicture  = () => {}
 
   const handleRetake = useCallback(() => {
       setPicture(undefined)

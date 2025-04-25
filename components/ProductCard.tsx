@@ -1,14 +1,21 @@
 import { Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import SphereButton from './sphere'
-import { images } from '@/constants/index'
+// import { images } from '@/constants/index'
 
-const ProductCard = () => {
+interface Product {
+    id: string;
+    name: string;
+    slug: string;
+    image_url: string;
+}
+
+const ProductCard = ({ product }: { product: Product }) => {
     return (
         <TouchableOpacity className="w-[50vw] max-w-[300px] h-auto bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden p-4">
             <View className="items-center">
                 <Image
-                    source={images.peperomia}
+                    source={{ uri: product.image_url }}
                     className="w-full h-[22vh] max-h-[180px] rounded-md"
                     resizeMode="contain"
                 />
@@ -20,7 +27,7 @@ const ProductCard = () => {
                         numberOfLines={2}
                         ellipsizeMode="tail"
                     >
-                        Peperomia Houseplant
+                        {product.name}
                     </Text>
                 </View>
                 <View className="mt-3">

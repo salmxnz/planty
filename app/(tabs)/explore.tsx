@@ -10,7 +10,7 @@ const Explore = () => {
       <GestureHandlerRootView className="flex-1">
         <ScrollView contentContainerStyle={{ height: "100%" }}>
           <View className="flex-1">
-            <ProductCard />
+            {/* <ProductCard /> */}
           </View>
         </ScrollView>
       </GestureHandlerRootView> 

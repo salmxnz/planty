@@ -36,18 +36,18 @@ const RootLayout = () => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
+     
         <AuthProvider>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            {/* Add other non-tab screens here */}
+             {/* Add other non-tab screens here */}
             <Stack.Screen name="+not-found" options={{ headerShown: false }} />
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
             <Stack.Screen name="screens" options={{ headerShown: false }} />
           </Stack>
         </AuthProvider>
-      </NavigationContainer>
+    
       
     </Provider>
   );  

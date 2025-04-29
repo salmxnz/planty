@@ -8,6 +8,8 @@ const ProfileLayout = () => {
     <>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="_profile" />
+        <Stack.Screen name="health-results" />
+        <Stack.Screen name="identification-results" />
       </Stack>
 
       <StatusBar style="dark" backgroundColor="#161622" />

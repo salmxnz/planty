@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import imageReducer from './imageSlice'
+import identificationReducer from './identificationSlice'
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
 export const store = configureStore({
     reducer: {
         image: imageReducer,
+        identification: identificationReducer,
     },
 })
 

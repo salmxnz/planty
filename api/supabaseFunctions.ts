@@ -11,7 +11,20 @@ const CategoriesFetch = async () => {
 const PlantsFetch = async () => {
     const {data: plants} = await supabase.from('plants').select('*');
     console.log(plants);
-    return plants;
+    return {plants};
 }
 
-export { CategoriesFetch, PlantsFetch };
+const PlantsFetchByCategory = async (category_id: number) => {
+    const {data: plants} = await supabase.from('plants').select('*').eq('category_id', category_id);
+    console.log("active category in plants fetch by category: ", category_id);
+    console.log(plants);
+    return {plants};
+}
+
+const PlantDetailsFetch = async (slug: string) => {
+    const {data: plant} = await supabase.from('plants').select('*').eq('slug', slug);
+    console.log(plant);
+    return {plant};
+}
+
+export { CategoriesFetch, PlantsFetch, PlantsFetchByCategory, PlantDetailsFetch };

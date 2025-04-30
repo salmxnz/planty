@@ -1,6 +1,7 @@
 import { Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import SphereButton from './sphere'
+import { router } from 'expo-router';
 // import { images } from '@/constants/index'
 
 interface Product {
@@ -12,7 +13,9 @@ interface Product {
 
 const ProductCard = ({ product }: { product: Product }) => {
     return (
-        <TouchableOpacity className="w-[50vw] max-w-[300px] h-auto bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden p-4">
+        <TouchableOpacity className="w-[50vw] max-w-[300px] h-auto bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden p-4" onPress={() => {
+            router.push(`/plant-details/${product.slug}`)
+        }}>
             <View className="items-center">
                 <Image
                     source={{ uri: product.image_url }}

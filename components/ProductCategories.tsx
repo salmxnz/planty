@@ -11,15 +11,25 @@ interface Props {
     categories: Category[]
     activeCategory: number
     setActiveCategory: (categoryId: number) => void
+    categoryLoading: boolean
 }
 
-const ProductCategories = ({ categories, activeCategory, setActiveCategory }: Props) => {
-    // zustand global state management ?? or local state and pass to product category??
+const ProductCategories = ({ categories, activeCategory, setActiveCategory, categoryLoading }: Props) => {
     return (
         <View>
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
+            {categoryLoading ? (
+                        <View className="flex-row items-center justify-between w-full">
+                            <View className="flex-row gap-10">
+                                <View className="h-4 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-md" />
+                                <View className="h-4 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-md" />
+                                <View className="h-4 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-md" />
+                                <View className="h-4 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-md" />
+                            </View>
+                        </View>
+            ) : (
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
                 className="flex-row overflow-x-scroll horizontal-scrollbar-hidden pr-8"
                 contentContainerStyle={{ gap: 27 }}
             >
@@ -40,6 +50,7 @@ const ProductCategories = ({ categories, activeCategory, setActiveCategory }: Pr
                     </TouchableOpacity>
                 ))}
             </ScrollView>
+            )}
         </View>
     )
 }

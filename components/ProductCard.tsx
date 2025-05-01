@@ -25,7 +25,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                     source={{ uri: product.image_url }}
                     className={`w-full h-[22vh] max-h-[180px] rounded-md ${imageLoading ? 'absolute opacity-0' : ''}`}
                     resizeMode="contain"
-                    onLoadStart={() => setImageLoading(true)}
+                    onLoadStart={() => setImageLoading(false)}
                     onLoadEnd={() => setImageLoading(false)}
                 />}
             </View>

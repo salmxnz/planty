@@ -62,4 +62,11 @@ const PlantByFeaturesFetch = async (feature_id: number) => {
     return allPlants;
 }
 
-export { FeaturesFetch, FeaturesFetchById, CategoriesFetch, PlantsFetch, PlantsFetchByCategory, PlantDetailsFetch, PlantByFeaturesFetch };
+const PlantFetchByTrait = async (trait: string, trait_value: string ) => {
+    const {data: plants} = await supabase.from('plants').select('*').eq(`${trait}`, trait_value);
+    console.log(plants);
+    return plants;
+}
+
+
+export { FeaturesFetch, FeaturesFetchById, PlantFetchByTrait, CategoriesFetch, PlantsFetch, PlantsFetchByCategory, PlantDetailsFetch, PlantByFeaturesFetch };

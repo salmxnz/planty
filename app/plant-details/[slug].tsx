@@ -29,9 +29,9 @@ export default function PlantDetails() {
     const colorScheme = useColorScheme()
     const { slug } = useLocalSearchParams<{ slug: string }>()
     const [plant, setPlant] = useState<Plant | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [imageLoading, setImageLoading] = useState(true)
-    const [quantity, setQuantity] = useState(1)
+    const [loading, setLoading] = useState<boolean>(true)
+    const [imageLoading, setImageLoading] = useState<boolean>(true)
+    const [quantity, setQuantity] = useState<number>(1)
 
     
 

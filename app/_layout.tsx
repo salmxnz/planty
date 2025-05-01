@@ -45,6 +45,10 @@ const RootLayout = () => {
             <Stack.Screen name="screens" options={{ headerShown: false }} />
             <Stack.Screen name="plant-details" options={{ headerShown: false }} />
             <Stack.Screen name="plant-details/[slug]" options={{ headerShown: false }} />
+            <Stack.Screen name="features" options={{ headerShown: false }} />
+            <Stack.Screen name="features/[id]" options={{ headerShown: false }} />
+            <Stack.Screen name="categories" options={{ headerShown: false }} />
+            <Stack.Screen name="categories/[id]" options={{ headerShown: false }} />
           </Stack>
         </AuthProvider>
       </NavigationContainer>

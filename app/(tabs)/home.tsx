@@ -13,15 +13,24 @@ import { useAuth } from '@/context/AuthProvider'
 import { router } from 'expo-router'
 import DisplayPicture from '@/components/DisplayPicture'
 import Loading from '@/components/Loading'
-import { CategoriesFetch, PlantsFetch, PlantsFetchByCategory } from '@/api/supabaseFunctions'
+import { CategoriesFetch, PlantsFetch, PlantsFetchByCategory, FeaturesFetch } from '@/api/supabaseFunctions'
 import SkeletonPlant from '@/components/SkeletonPlant'
 import SkeletonDiscover from '@/components/SkeletonDiscover'
+import DiscoverCard from '@/components/DiscoverCard'
+import { useColorScheme } from '@/hooks/useColorScheme'
 
 //define categories interface
 interface Category {
     id: string
     name: string
     slug: string
+}
+
+//define featured section interface
+interface Feature {
+    id: number
+    name: string
+    img_url: string
 }
 
 //define plants interface
@@ -38,14 +47,15 @@ interface Plant {
     light_requirements: string
     water_frequency: string
     pet_friendly: boolean
-    // category: Category;
 }
 
 const Home = () => {
     //categories fetch in main home component
+    const colorScheme = useColorScheme()
     const [activeCategory, setActiveCategory] = useState<number>(1)
     const [productLoading, setProductLoading] = useState<boolean>(true)
     const [categoryLoading, setCategoryLoading] = useState<boolean>(true)
+    const [discoverLoading, setDiscoverLoading] = useState<boolean>(true)
 
     const [categories, setCategories] = useState<Category[]>([])
     useEffect(() => {
@@ -66,6 +76,17 @@ const Home = () => {
             setProductLoading(false)
         }
         fetchPlants()
+    }, [])
+
+    //features fetch in main home component
+    const [features, setFeatures] = useState<Feature[]>([])
+    useEffect(() => {
+        const fetchFeatures = async () => {
+            const features = await FeaturesFetch()
+            setFeatures(features as Feature[])
+            setDiscoverLoading(false)
+        }
+        fetchFeatures()
     }, [])
 
     //plants fetch by category in main home component
@@ -210,15 +231,27 @@ const Home = () => {
                                 Discover
                             </Text>
                         </View>
-                        <View className="mt-5 mr-6 flex-row flex-wrap justify-between gap-3 shadow-[5px_5px_9px_0px_rgba(0,0,0,0.16)] dark:shadow-[0px_0px_2px_0px_rgba(250,250,250,0.2)]">
+                        {discoverLoading ? (
+                        <View className="mt-5 mr-6 gap-4 flex-row flex-wrap justify-center shadow-[5px_5px_9px_0px_rgba(0,0,0,0.16)] dark:shadow-[0px_0px_2px_0px_rgba(250,250,250,0.2)]">
                             <SkeletonDiscover />
                             <SkeletonDiscover />
                             <SkeletonDiscover />
                             <SkeletonDiscover />
                         </View>
+                        ) : (
+                            <View className="mt-5 mr-6 gap-4 flex-row flex-wrap justify-center shadow-[5px_5px_9px_0px_rgba(0,0,0,0.16)] dark:shadow-[0px_0px_2px_0px_rgba(250,250,250,0.2)]">
+                                {features.map((feature, index) => (
+                                    <DiscoverCard key={index} feature={feature} onPress={() => router.push(`/features/${feature.id}`)}/>
+                                ))}
+                            </View>
+                        )}
                     </View>
                 </ScrollView>
-                <StatusBar style="light" backgroundColor="#161622" />
+                {colorScheme === 'dark' ? (
+                    <StatusBar style="light" backgroundColor="#161622" />
+                ) : (
+                    <StatusBar style="dark" backgroundColor="#fff" />
+                )}
             </GestureHandlerRootView>
         </SafeAreaView>
     )

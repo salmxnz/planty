@@ -7,6 +7,7 @@ import {
 import React, { useState, useRef, useCallback } from 'react'
 import {
   ActivityIndicator,
+  Alert,
   Platform,
   SafeAreaView,
   StatusBar,
@@ -219,7 +220,7 @@ export default function CameraComponent() {
   const [isCapturing, setIsCapturing] = useState(false)
   const { height, width } = useWindowDimensions()
   const camera = useRef<CameraView | null>(null)
-  const { updateNewPlantImage, updatePlantHealthCheckImage } = useImage()
+
 
   const params = useLocalSearchParams()
   const previousScreen = params.from // Add the "from" parameter when navigating to identify
@@ -251,19 +252,70 @@ export default function CameraComponent() {
       setFacing((current) => (current === 'back' ? 'front' : 'back'))
   }, [])
 
-  // const handleSavePicture = useCallback(() => {
-  //     if (picture?.uri) {
-  //         const pictureURI = picture.uri
-  //         if (previousScreen === 'addPlant') {
-  //             updateNewPlantImage(pictureURI)
-  //         } else {
-  //             updatePlantHealthCheckImage(pictureURI)
-  //         }
-  //         router.back()
-  //     }
-  // }, [picture, updateNewPlantImage, updatePlantHealthCheckImage, previousScreen])
+  const handleSavePicture = async (imageUri: string) => {
+    try {
+      const plantNetAPIKey = process.env.EXPO_PUBLIC_PLANTNET_API_KEY || ''
+      const project = 'all'
+      const plantNetEndpoint = `https://my-api.plantnet.org/v2/identify/${project}?api-key=${plantNetAPIKey}`
+  
+      const filename = imageUri.split('/').pop() || 'photo.jpg'
+      const match = /\.(\w+)$/.exec(filename)
+      const type = match ? `image/${match[1]}` : 'image/jpeg'
+  
+      const formData = new FormData()
+      formData.append('images', {
+        uri: imageUri,
+        name: filename,
+        type,
+      } as any)
+      formData.append('organs', 'auto')
+  
+      const idResponse = await fetch(plantNetEndpoint, {
+        method: 'POST',
+        body: formData,
+      })
+  
+      if (!idResponse.ok) {
+        throw new Error(`Plant identification failed. Status: ${idResponse.status}`)
+      }
+  
+      const idData = await idResponse.json()
+      const speciesName =
+        idData.results?.[0]?.species?.commonNames?.[0] ||
+        idData.results?.[0]?.species?.family?.scientificNameWithoutAuthor ||
+        'Unknown species'
+  
 
-  const handleSavePicture  = () => {}
+      const base64Image = await convertImageToBase64(imageUri)
+      const healthResponse = await fetch('https://plant.id/api/v3/health_assessment', {
+        method: 'POST',
+        headers: {
+          'Api-Key': process.env.EXPO_PUBLIC_KINDWISE_API_KEY || '',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ images: [base64Image] }),
+      })
+  
+      if (!healthResponse.ok) {
+        throw new Error(`Health assessment failed: ${healthResponse.statusText}`)
+      }
+  
+      const healthData = await healthResponse.json()
+
+      router.push({
+        pathname: '/screens/HealthCheckResultScreen',
+        params: {
+          image: healthData.input.images[0],
+          result: JSON.stringify(healthData.result),
+          species: speciesName,
+        },
+      })
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to process plant image.')
+    } finally {
+    }
+  }
+  
 
   const handleRetake = useCallback(() => {
       setPicture(undefined)
@@ -277,6 +329,18 @@ export default function CameraComponent() {
           </View>
       )
   }
+  
+  const convertImageToBase64 = async (uri: string): Promise<string> => {
+    const response = await fetch(uri)
+    const blob = await response.blob()
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.onloadend = () =>
+            resolve((reader.result as string).split(',')[1])
+        reader.onerror = () => reject(reader.error)
+        reader.readAsDataURL(blob)
+    })
+}
 
   if (!permissionCamera.granted) {
       return (
@@ -309,9 +373,16 @@ export default function CameraComponent() {
                       />
                   </View>
                   <View className='items-center justify-center gap-4'>
-                    <TouchableOpacity onPress={handleSavePicture} className='w-[80vw] h-16 justify-center items-center border rounded-lg bg-accent-dark'>
-                      <Text className='text-black font-pmedium text-center text-lg'>Use Photo</Text>
-                    </TouchableOpacity>
+                  <TouchableOpacity
+  onPress={() => {
+    console.log('Use Photo pressed') // ✅ Confirm button press
+    handleSavePicture(picture?.uri || '')
+  }}
+  className='w-[80vw] h-16 justify-center items-center border rounded-lg bg-accent-dark'
+>
+  <Text className='text-black font-pmedium text-center text-lg'>Use Photo</Text>
+</TouchableOpacity>
+
                     <TouchableOpacity onPress={handleRetake}>
                     <View className='w-[78vw] h-16'>
                       <Text className='text-center text-white font-pmedium text-lg'>Tap to retake</Text>
@@ -389,3 +460,5 @@ export default function CameraComponent() {
       </SafeAreaView>
   )
 }
+
+

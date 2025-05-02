@@ -24,7 +24,7 @@ export default function DiscoverCard({ feature, onPress }: DiscoverCardProps) {
                 {feature?.img_url && (
                     <Image
                         source={{ uri: feature.img_url }}
-                        className="w-[50px] h-[50px] rounded-xl"
+                        className={`w-[50px] h-[50px] rounded-xl ${imageLoading ? 'absolute opacity-0' : ''}`}
                         onLoadStart={() => setImageLoading(true)}
                         onLoadEnd={() => setImageLoading(false)}
                     />

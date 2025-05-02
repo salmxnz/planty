@@ -9,10 +9,20 @@ interface Product {
     name: string;
     slug: string;
     image_url: string;
+    price?: number;
+    description?: string;
+    category_id?: number;
+    stock_quantity?: number;
+    care_level?: string;
+    light_requirements?: string;
+    water_frequency?: string;
+    pet_friendly?: boolean;
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
-    const [imageLoading, setImageLoading] = useState(true)
+    const [imageLoading, setImageLoading] = useState(true)    
+    
+    
     return (
         <TouchableOpacity className="w-[50vw] max-w-[300px] h-auto bg-white dark:bg-[#1b1b1d] rounded-[18px] overflow-hidden p-4" onPress={() => {
             router.push(`/plant-details/${product.slug}`)
@@ -25,7 +35,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                     source={{ uri: product.image_url }}
                     className={`w-full h-[22vh] max-h-[180px] rounded-md ${imageLoading ? 'absolute opacity-0' : ''}`}
                     resizeMode="contain"
-                    onLoadStart={() => setImageLoading(true)}
+                    onLoadStart={() => setImageLoading(false)}
                     onLoadEnd={() => setImageLoading(false)}
                 />}
             </View>
@@ -38,9 +48,16 @@ const ProductCard = ({ product }: { product: Product }) => {
                     >
                         {product.name}
                     </Text>
+                    {/* {product.price && (
+                        <Text className="text-[14px] font-pmedium text-accent-light dark:text-accent-dark mt-1">
+                            Rs {product.price.toFixed(2)}
+                        </Text>
+                    )} */}
                 </View>
                 <View className="mt-3">
-                    <SphereButton />
+                    <TouchableOpacity>
+                        <SphereButton />
+                    </TouchableOpacity>
                 </View>
             </View>
         </TouchableOpacity>

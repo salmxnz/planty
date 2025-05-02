@@ -5,7 +5,11 @@ import { Ionicons } from '@expo/vector-icons'
 import Loading from '@/components/Loading'
 import { PlantDetailsFetch } from '@/api/supabaseFunctions'
 import { useColorScheme } from '@/hooks/useColorScheme'
-
+import { useCart } from '@/context/CartProvider';
+import { ScrollView } from 'react-native-gesture-handler'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { Alert } from 'react-native';
 
 interface Plant {
     id: string
@@ -32,7 +36,22 @@ export default function PlantDetails() {
     const [loading, setLoading] = useState<boolean>(true)
     const [imageLoading, setImageLoading] = useState<boolean>(true)
     const [quantity, setQuantity] = useState<number>(1)
+    const { addToCart } = useCart();
 
+    const handleAddToCart = (e: any) => {
+        e.stopPropagation(); // Prevent navigation to product details
+        addToCart(plant as any);
+        
+        // Show alert when product is added to cart
+        Alert.alert(
+            "Added to Cart",
+            `${plant?.name} has been added to your cart.`,
+            [
+                { text: "OK", onPress: () => console.log("OK Pressed") }
+            ],
+            { cancelable: true }
+        );
+    };
     
 
     useEffect(() => {
@@ -57,7 +76,7 @@ export default function PlantDetails() {
                             'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?ixlib=rb-4.0.3',
                         description:
                             'The Monstera deliciosa plant, also known as the Swiss cheese plant, is a species of flowering plant native to tropical forests of southern Mexico.',
-                        price: '$35.99',
+                        price: '350',
                         care_level: 'Easy',
                         light_requirements: 'Medium to bright indirect light',
                         water_frequency: 'Once a week',
@@ -104,13 +123,15 @@ export default function PlantDetails() {
     }
 
     return (
+        <SafeAreaView className="flex-1 bg-primary-light dark:bg-primary-dark" edges={['top']}>
+        <GestureHandlerRootView className="flex-1">
+        <ScrollView contentContainerStyle={{ height: "100%" }} showsVerticalScrollIndicator={false}>
         <View className="flex-1 bg-white dark:bg-[#121214]">
             <Stack.Screen
                 options={{
                     headerShown: false,
                 }}
             />
-            <View className="pt-20" />
 
             <View className="px-4 flex-row items-center">
                 <TouchableOpacity
@@ -204,10 +225,7 @@ export default function PlantDetails() {
                 <View className="flex-1">
                 <TouchableOpacity
                     className="bg-accent-light dark:bg-accent-dark py-4 rounded-full items-center w-full"
-                    onPress={() => {
-                        // Add to cart functionality would go here
-                        console.log('Add to cart:', plant.name)
-                    }}
+                    onPress={handleAddToCart}
                 >
                     <Text className="text-white dark:text-black font-pmedium text-base">
                         Add to Cart
@@ -216,5 +234,8 @@ export default function PlantDetails() {
                 </View>
             </View>
         </View>
+        </ScrollView>
+        </GestureHandlerRootView>
+        </SafeAreaView>
     )
 }

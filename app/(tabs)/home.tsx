@@ -172,7 +172,7 @@ const Home = () => {
             edges={['bottom']}
         >
             <GestureHandlerRootView className="flex-1">
-                <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
                     <View className="w-full h-[19vh] bg-primary-light dark:bg-primary-dark justify-end ">
                         <View className="flex flex-row items-center justify-between w-full px-6">
                             <View>

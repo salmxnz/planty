@@ -25,12 +25,46 @@ import { v4 as uuidv4 } from 'uuid'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useColorScheme } from 'react-native'
 import { Keyboard, Dimensions } from 'react-native'
+import Typing from '@/components/Typing'
 
 const newUUID = uuidv4()
 const genAI = new GoogleGenerativeAI(
     process.env.EXPO_PUBLIC_GEMINI_API_KEY || '',
 )
 const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' })
+
+// Helper function to format markdown text
+const formatMarkdownText = (text: string) => {
+    if (!text) return '';
+    
+    // Bold: Convert **text** to styled text
+    let formattedText = text.replace(/\*\*(.*?)\*\*/g, '$1');
+    
+    // Italic: Convert *text* to styled text (but not if it's part of **)
+    formattedText = formattedText.replace(/(?<!\*)\*(?!\*)(.*?)(?<!\*)\*(?!\*)/g, '$1');
+    
+    // Lists: Convert - item to • item
+    formattedText = formattedText.replace(/^- (.*?)$/gm, '• $1');
+    
+    // Lists: Convert * item to • item (asterisk bullet points)
+    formattedText = formattedText.replace(/^\* (.*?)$/gm, '• $1');
+    
+    // Headers: Convert # Header to styled text
+    formattedText = formattedText.replace(/^# (.*?)$/gm, '$1');
+    formattedText = formattedText.replace(/^## (.*?)$/gm, '$1');
+    formattedText = formattedText.replace(/^### (.*?)$/gm, '$1');
+    
+    // Links: Convert [text](url) to just text
+    formattedText = formattedText.replace(/\[(.*?)\]\(.*?\)/g, '$1');
+    
+    // Code blocks: Remove ```
+    formattedText = formattedText.replace(/```(?:.*?)\n([\s\S]*?)```/g, '$1');
+    
+    // Inline code: Remove `
+    formattedText = formattedText.replace(/`(.*?)`/g, '$1');
+    
+    return formattedText;
+};
 
 interface Message {
     text: string
@@ -88,7 +122,6 @@ const MessageScreen = () => {
     }, []);
 
     useEffect(() => {
-        console.log('Session in MessageScreen:', session)
     }, [session])
 
     const handleSend = async () => {
@@ -108,8 +141,20 @@ const MessageScreen = () => {
         }
 
         let imageUrl = null
+        let imageBase64 = null
         if (selectedImage) {
+            // Upload to Supabase for storage
             imageUrl = await uploadImage(selectedImage)
+            
+            // Get base64 for Gemini
+            try {
+                imageBase64 = await FileSystem.readAsStringAsync(selectedImage, {
+                    encoding: FileSystem.EncodingType.Base64,
+                })
+            } catch (error) {
+                console.error('Error reading image as base64:', error)
+            }
+            
             setSelectedImage(null)
         }
 
@@ -135,6 +180,7 @@ const MessageScreen = () => {
                 ])
             }
 
+            // Insert message with image into database
             await supabase.from('messages').insert([
                 {
                     user_id: session.user.id,
@@ -147,14 +193,31 @@ const MessageScreen = () => {
 
             setInput('')
 
+            // Create message parts based on whether we have text, image, or both
+            const userParts = []
+            
             if (input.trim()) {
+                userParts.push({ text: input })
+            }
+            
+            if (imageBase64) {
+                userParts.push({
+                    inlineData: {
+                        data: imageBase64,
+                        mimeType: 'image/jpeg',
+                    },
+                })
+            }
+
+            // Only proceed if we have something to send
+            if (userParts.length > 0) {
                 const chat = model.startChat({
                     history: [
                         {
                             role: 'user',
                             parts: [
                                 {
-                                    text: 'You are a plant expert. Only answer questions related to greetings, plants, fruits, vegetables, trees, flowers, leaves, gardening, botany, and nature. If a question is unrelated, politely ask the user to stay on topic.',
+                                    text: 'You are a plant expert. Only answer questions related to greetings, plants, fruits, vegetables, trees, flowers, leaves, gardening, botany, and nature. If a question is unrelated, politely ask the user to stay on topic. If I send you an image of a plant, identify it and provide care instructions.',
                                 },
                             ],
                         },
@@ -166,10 +229,15 @@ const MessageScreen = () => {
                     generationConfig: { temperature: 0.7 },
                 })
 
-                const result = await chat.sendMessage(input)
+                // Send the message with text and/or image
+                const result = await chat.sendMessage(userParts)
                 const text = await result.response.text()
 
-                const aiMessage = { text, isUser: false, timestamp: new Date() }
+                const aiMessage = { 
+                    text, 
+                    isUser: false, 
+                    timestamp: new Date() 
+                }
                 setMessages((prev) => [...prev, aiMessage])
 
                 await supabase.from('messages').insert([
@@ -255,13 +323,14 @@ const MessageScreen = () => {
             return
         }
 
-        setMessages(
-            data.map((msg) => ({
-                text: msg.text,
-                isUser: msg.is_user,
-                timestamp: new Date(msg.created_at),
-            })),
-        )
+        const formattedMessages = data.map((msg) => ({
+            text: msg.text || '',
+            isUser: msg.is_user,
+            timestamp: new Date(msg.created_at),
+            image: msg.image || null,
+        }))
+
+        setMessages(formattedMessages)
     }
 
     //Delete part
@@ -359,25 +428,71 @@ const MessageScreen = () => {
 
     //Image part
     const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 0.5,
-        })
+        try {
+            // Request permissions first
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            
+            if (status !== 'granted') {
+                Alert.alert(
+                    'Permission Required',
+                    'Please grant camera roll permissions to upload images.',
+                    [{ text: 'OK' }]
+                );
+                return;
+            }
+            
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                aspect: [1, 1],
+                quality: 0.7,
+                base64: false, // We'll get base64 separately for better performance
+            });
 
-        if (!result.canceled && result.assets?.length > 0) {
-            const selectedUri = result.assets[0].uri
-            console.log('Selected Image URI:', selectedUri)
-            setSelectedImage(selectedUri)
-        } else {
-            console.log('Image selection canceled.')
+            if (!result.canceled && result.assets?.length > 0) {
+                const selectedUri = result.assets[0].uri;
+                
+                // Check file size
+                const fileInfo = await FileSystem.getInfoAsync(selectedUri);
+                
+                // Make sure the file exists before checking size
+                if (fileInfo.exists) {
+                    // TypeScript doesn't recognize the size property on FileInfo
+                    // but it exists when fileInfo.exists is true
+                    const fileSize = (fileInfo as any).size;
+                    const fileSizeMB = fileSize / 1024 / 1024;
+                    
+                    if (fileSizeMB > 10) {
+                        Alert.alert(
+                            'Image Too Large',
+                            'Please select an image smaller than 10MB.',
+                            [{ text: 'OK' }]
+                        );
+                        return;
+                    }
+                }
+                
+                setSelectedImage(selectedUri);
+                
+                // Automatically focus the text input after selecting an image
+                // This provides a better UX flow
+                if (!input.trim()) {
+                    setInput('What plant is this?');
+                }
+            } else {
+                console.log('Image selection canceled.');
+            }
+        } catch (error) {
+            console.error('Error picking image:', error);
+            Alert.alert(
+                'Error',
+                'There was an error selecting your image. Please try again.',
+                [{ text: 'OK' }]
+            );
         }
     }
     const uploadImage = async (uri: string) => {
         try {
-            console.log('Starting image upload...')
-
             const bucketName = 'chat-images'
 
             const base64 = await FileSystem.readAsStringAsync(uri, {
@@ -388,8 +503,6 @@ const MessageScreen = () => {
             const fileExtension = uri.split('.').pop()?.toLowerCase() || 'jpg'
             const fileName = `${uuidv4()}.${fileExtension}`
             const filePath = `${bucketName}/${fileName}`
-
-            console.log('Uploading image:', filePath)
 
             const { data, error } = await supabase.storage
                 .from(bucketName)
@@ -402,8 +515,6 @@ const MessageScreen = () => {
                 throw error
             }
 
-            console.log('Upload successful:', data)
-
             const { data: publicUrlData } = supabase.storage
                 .from(bucketName)
                 .getPublicUrl(filePath)
@@ -413,7 +524,6 @@ const MessageScreen = () => {
                 return null
             }
 
-            console.log('Public URL:', publicUrlData.publicUrl)
             return publicUrlData.publicUrl
         } catch (error) {
             console.error('Image upload error:', error)
@@ -498,14 +608,14 @@ const MessageScreen = () => {
                     accessible={false}
                 >
                     <View className="flex-1">
-                        <View className="flex-row items-center justify-between p-4 border-gray-200 dark:border-gray-800">
+                        <View className="flex-row items-center justify-between p-6 border-gray-200 dark:border-gray-800">
                             <Text className="text-3xl font-bold text-primary-dark dark:text-white text-center">
                                 Messages
                             </Text>
                             <View className="flex-row">
                                 <TouchableOpacity
                                     onPress={handleNewChat}
-                                    className="w-12 h-12 bg-accent-light dark:bg-[#B4F58D] rounded-full items-center justify-center mr-2"
+                                    className="w-12 h-12 bg-accent-light dark:bg-accent-dark rounded-full items-center justify-center mr-2"
                                 >
                                     <Image
                                         source={icons.chatBubble}
@@ -516,7 +626,7 @@ const MessageScreen = () => {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={handleHistory}
-                                    className="w-12 h-12 bg-accent-light dark:bg-[#B4F58D] rounded-full items-center justify-center"
+                                    className="w-12 h-12 bg-accent-light dark:bg-accent-dark rounded-full items-center justify-center"
                                 >
                                     <Image
                                         source={icons.history}
@@ -532,7 +642,7 @@ const MessageScreen = () => {
                         <View className="flex-1">
                             <ScrollView
                                 ref={scrollViewRef}
-                                className="flex-1 p-4"
+                                className="flex-1 pt-6 px-6"
                                 contentContainerStyle={{ 
                                     paddingBottom: keyboardVisible ? 20 : 100 
                                 }}
@@ -546,9 +656,6 @@ const MessageScreen = () => {
                                             any questions about plant care,
                                             identification, or gardening tips.
                                         </Text>
-                                        {/* <Text className="text-gray-500 dark:text-gray-400 text-center text-lg mb-6">
-                                            Ask me anything!
-                                        </Text> */}
                                     </View>
                                 ) : (
                                     messages.map((message, index) => (
@@ -599,16 +706,9 @@ const MessageScreen = () => {
                                                                 resizeMode="cover"
                                                             />
                                                         )}
-                                                        {/* <Markdown
-                                                            style={
-                                                                Platform.OS ===
-                                                                'ios'
-                                                                    ? markdownStyles
-                                                                    : darkMarkdownStyles
-                                                            }
-                                                        > */}
-                                                            <Text className="text-primary-dark dark:text-primary-dark px-2 pt-1">{message.text}</Text>
-                                                        {/* </Markdown> */}
+                                                        <Text className="text-primary-dark dark:text-primary-dark px-2 pt-1">
+                                                            {formatMarkdownText(message.text)}
+                                                        </Text>
                                                         <Text className="text-xs mx-2 text-gray-500 dark:text-gray-600">
                                                             {new Date(
                                                                 message.timestamp,
@@ -631,16 +731,29 @@ const MessageScreen = () => {
                                 {isLoading && (
                                     <View className="mb-4 flex-row justify-start ">
                                         <View className='w-8 h-8 bg-primary-dark dark:bg-primary-light mr-3 items-center justify-center rounded-full'></View>
-                                        <View className="w-12 h-12 bg-gray-200 dark:bg-gray-300 rounded-xl items-center justify-center">
-                                            <Text className="text-black dark:text-black">
-                                                ...
-                                            </Text>
-                                        </View>
+                                        <Typing />
                                     </View>
                                 )}
                             </ScrollView>
 
-                            <View className={`absolute ${keyboardVisible ? 'bottom-0' : 'bottom-28'} left-0 right-0 bg-primary-light dark:bg-primary-dark pt-2 pb-2 px-2 z-10 border-t border-gray-200 dark:border-gray-700`} style={Platform.OS === 'android' && keyboardVisible ? { bottom: 0 } : {}}>
+                            <View className={`absolute ${keyboardVisible ? 'bottom-0 pb-2' : 'bottom-20 pb-12'} left-0 right-0 bg-primary-light dark:bg-primary-dark pt-2 px-2 z-10 border-t border-gray-200 dark:border-gray-700`} style={Platform.OS === 'android' && keyboardVisible ? { bottom: 0 } : {}}>
+                                {selectedImage && (
+                                    <View className="mb-2 flex-row items-center">
+                                        <Image 
+                                            source={{ uri: selectedImage }} 
+                                            className="w-16 h-16 rounded-lg mr-2" 
+                                            resizeMode="cover"
+                                        />
+                                        <TouchableOpacity 
+                                            onPress={() => setSelectedImage(null)}
+                                            className="bg-gray-200 dark:bg-gray-700 rounded-full p-1 absolute top-0 right-0"
+                                        >
+                                            <Text className="text-primary-dark dark:text-white font-bold w-4 h-4 text-center">
+                                                ✕
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
                                 <View className="flex-row items-center">
                                     <TouchableOpacity
                                         onPress={pickImage}
@@ -684,7 +797,6 @@ const MessageScreen = () => {
                             </View>
                         </View>
                     </View>
-                    {/* </View> */}
                 </TouchableWithoutFeedback>
 
                 {isHistoryOpen && (
@@ -712,6 +824,7 @@ const MessageScreen = () => {
                             <ScrollView
                                 keyboardShouldPersistTaps="handled"
                                 className="flex-1"
+                                style={{ paddingBottom: 100 }}
                             >
                                 {Object.keys(history).map((date, index) => (
                                     <View key={index} className="mb-4">

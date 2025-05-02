@@ -230,14 +230,15 @@ export const checkPlantHealthWithKindwise = async (imageBase64: string): Promise
 // Main function to identify a plant (with fallback)
 export const identifyPlant = async (imageBase64: string): Promise<IdentifiedPlant[]> => {
   try {
-    // Try Kindwise first
-    const plants = await identifyPlantWithKindwise(imageBase64);
+    // Try PlantNet first
+    const plants = await identifyPlantWithPlantNet(imageBase64);
     return plants;
   } catch (error) {
-    console.log('Kindwise failed, trying PlantNet as backup...');
+    console.log('PlantNet failed, trying Kindwise as backup...');
     try {
-      // Fallback to PlantNet
-      const plants = await identifyPlantWithPlantNet(imageBase64);
+      // Fallback to Kindwise
+      // Note: The Kindwise API is not a direct replacement for PlantNet, so the results may differ
+      const plants = await identifyPlantWithKindwise(imageBase64);
       return plants;
     } catch (backupError) {
       throw new Error('Failed to identify plant with both services');

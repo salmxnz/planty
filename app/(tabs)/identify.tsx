@@ -4,6 +4,7 @@ import {
   useCameraPermissions,
   CameraCapturedPicture,
 } from 'expo-camera'
+import * as ImagePicker from 'expo-image-picker'
 import React, { useState, useRef, useCallback } from 'react'
 import {
   ActivityIndicator,
@@ -22,6 +23,8 @@ import { Image } from 'expo-image'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useImage } from '../../store/hooks'
 import { identifyPlant, assessPlantHealth } from '../../api/plantIdentificationAPI'
+
+
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000' },
@@ -112,7 +115,7 @@ export default function CameraComponent() {
   const [picture, setPicture] = useState<CameraCapturedPicture | undefined>()
   const [isCapturing, setIsCapturing] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [mode, setMode] = useState<'identify' | 'health'>('identify') // mode state
+  const [mode, setMode] = useState<'identify' | 'health'>('identify')
 
   const { height, width } = useWindowDimensions()
   const camera = useRef<CameraView | null>(null)
@@ -140,8 +143,22 @@ export default function CameraComponent() {
     }
   }, [isCapturing])
 
-  const handleToggleCameraFacing = useCallback(() => {
-    setFacing(current => (current === 'back' ? 'front' : 'back'))
+  const pickImageFromLibrary = useCallback(async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      base64: true,
+      quality: 1,
+    })
+
+    if (!result.canceled && result.assets?.length > 0) {
+      const selected = result.assets[0]
+      setPicture({
+        uri: selected.uri,
+        base64: selected.base64 || '',
+        width: selected.width,
+        height: selected.height,
+      } as CameraCapturedPicture)
+    }
   }, [])
 
   const handleSavePicture = useCallback(async () => {
@@ -223,14 +240,14 @@ export default function CameraComponent() {
                 <TouchableOpacity
                   onPress={handleSavePicture}
                   disabled={isProcessing}
-                  style={[styles.saveButton, { width: '80%', height: 60 }]}
+                  className="w-[80vw] h-16 justify-center items-center border rounded-lg bg-accent-dark"
                 >
-                  <Text style={styles.buttonText}>
+                  <Text className="text-white text-base font-semibold text-center">
                     {mode === 'health' ? 'Check Health' : 'Identify Plant'}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleRetake} disabled={isProcessing}>
-                  <View style={{ width: '78vw', height: 60 }}>
+                  <View style={{ width: '80%', height: 60 }}>
                     <Text style={{ color: '#fff', textAlign: 'center', fontSize: 18 }}>
                       Tap to retake
                     </Text>
@@ -267,10 +284,10 @@ export default function CameraComponent() {
           <View style={styles.controlsContainer}>
             <TouchableOpacity
               style={styles.controlButton}
-              onPress={handleToggleCameraFacing}
+              onPress={pickImageFromLibrary}
               disabled={isCapturing}
             >
-              {icons['flipCamera']()}
+              {icons['gallery'] ? icons['gallery']() : <Text style={{ color: '#fff' }}>Gallery</Text>}
             </TouchableOpacity>
 
             <TouchableOpacity

@@ -15,8 +15,8 @@ export const icons = {
     takePhoto: (props) => (
         <AntDesign name="camera" size={40} color="white" {...props} />
     ),
-    flipCamera: (props) => (
-        <Ionicons name="camera-reverse" size={40} color="white" {...props} />
+    gallery: (props) => (
+        <Ionicons name="images" size={28} color="white" {...props} />
     ),
     back: (props) => (
         <AntDesign name="back" size={40} color="white" {...props} />

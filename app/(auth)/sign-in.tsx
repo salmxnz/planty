@@ -1,22 +1,17 @@
 import { View, Text, Image } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, GestureHandlerRootView } from "react-native-gesture-handler";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { supabase } from '../../utils/supabase'
 import { images } from "../../constants";
 import { TouchableOpacity } from "react-native";
 import { useAuth } from '@/context/AuthProvider'
 import Loading from '@/components/Loading'
-import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native';
-import { useCallback } from 'react';
-import { useNavigation } from '@react-navigation/native';
-
-
 
 const SignIn = () => {
   const { session, isLoading } = useAuth();
@@ -33,11 +28,11 @@ const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Use useEffect for navigation instead of redirecting during render
-  // useEffect(() => {
-  //   if (session && !isLoading) {
-  //     router.replace("/(tabs)/home");
-  //   }
-  // }, [session, isLoading]);
+  useEffect(() => {
+    if (session && !isLoading) {
+      router.replace("/(tabs)/home");
+    }
+  }, [session, isLoading]);
 
   // If still loading auth state, show loading screen
 

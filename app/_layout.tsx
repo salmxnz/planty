@@ -1,11 +1,10 @@
 import React from 'react'
-import { Stack } from 'expo-router'
+import { Slot } from 'expo-router'
 import "../global.css";
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AuthProvider } from '../context/AuthProvider';
-import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
 
@@ -29,29 +28,15 @@ const RootLayout = () => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded,error]);
+  }, [fontsLoaded, error]);
 
   if (!fontsLoaded && !error) return null;
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <AuthProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="screens" options={{ headerShown: false }} />
-            <Stack.Screen name="plant-details" options={{ headerShown: false }} />
-            <Stack.Screen name="plant-details/[slug]" options={{ headerShown: false }} />
-            <Stack.Screen name="features" options={{ headerShown: false }} />
-            <Stack.Screen name="features/[id]" options={{ headerShown: false }} />
-            <Stack.Screen name="categories" options={{ headerShown: false }} />
-            <Stack.Screen name="categories/[id]" options={{ headerShown: false }} />
-          </Stack>
-        </AuthProvider>
-      </NavigationContainer>
+      <AuthProvider>
+        <Slot />
+      </AuthProvider>
     </Provider>
   );  
 };

@@ -15,11 +15,13 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   View,
+  Alert
 } from 'react-native'
 import { icons } from '@/constants/cameraIcon'
 import { Image } from 'expo-image'
 import { router, useLocalSearchParams } from 'expo-router'
 import { useImage } from '../../store/hooks'
+import { identifyPlant, assessPlantHealth } from '../../api/plantIdentificationAPI'
 
 const styles = StyleSheet.create({
   container: {
@@ -217,6 +219,7 @@ export default function CameraComponent() {
   const [permissionCamera, requestCameraPermission] = useCameraPermissions()
   const [picture, setPicture] = useState<CameraCapturedPicture | undefined>()
   const [isCapturing, setIsCapturing] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   const { height, width } = useWindowDimensions()
   const camera = useRef<CameraView | null>(null)
   const { updateNewPlantImage, updatePlantHealthCheckImage } = useImage()
@@ -251,19 +254,58 @@ export default function CameraComponent() {
       setFacing((current) => (current === 'back' ? 'front' : 'back'))
   }, [])
 
-  // const handleSavePicture = useCallback(() => {
-  //     if (picture?.uri) {
-  //         const pictureURI = picture.uri
-  //         if (previousScreen === 'addPlant') {
-  //             updateNewPlantImage(pictureURI)
-  //         } else {
-  //             updatePlantHealthCheckImage(pictureURI)
-  //         }
-  //         router.back()
-  //     }
-  // }, [picture, updateNewPlantImage, updatePlantHealthCheckImage, previousScreen])
-
-  const handleSavePicture  = () => {}
+  const handleSavePicture = useCallback(async () => {
+    if (!picture?.uri || !picture.base64) {
+      Alert.alert('Error', 'No picture data available');
+      return;
+    }
+    
+    setIsProcessing(true);
+    
+    try {
+      const pictureURI = picture.uri;
+      const imageBase64 = `data:image/jpeg;base64,${picture.base64}`;
+      
+      // Get the mode parameter (default to 'identify')
+      const mode = params.mode as 'identify' | 'health' || 'identify';
+      
+      // Store image based on the source screen
+      if (previousScreen === 'addPlant') {
+        updateNewPlantImage(pictureURI);
+      } else {
+        updatePlantHealthCheckImage(pictureURI);
+      }
+      
+      // Process based on mode
+      if (mode === 'health') {
+        // Health check mode
+        const healthData = await assessPlantHealth(imageBase64);
+        
+        // Navigate to health results screen with data
+        router.push({
+          pathname: '/(screens)/health-results',
+          params: { healthData: JSON.stringify(healthData) }
+        });
+      } else {
+        // Default: Plant Identification mode
+        const plants = await identifyPlant(imageBase64);
+        
+        // Navigate to identification results screen with data
+        router.push({
+          pathname: '/(screens)/identification-results',
+          params: { plants: JSON.stringify(plants) }
+        });
+      }
+    } catch (error) {
+      console.error('Error processing image:', error);
+      Alert.alert(
+        'Processing Error',
+        'There was an error processing your image. Please try again.'
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  }, [picture, params, previousScreen, updateNewPlantImage, updatePlantHealthCheckImage]);
 
   const handleRetake = useCallback(() => {
       setPicture(undefined)
@@ -297,45 +339,47 @@ export default function CameraComponent() {
   }
 
   if (picture) {
-      return (
-          <SafeAreaView style={styles.container}>
-              <View style={styles.previewContainer}>
-                  <View style={styles.previewImageContainer}>
-                      <Image
-                          source={{ uri: picture.uri }}
-                          style={styles.previewImage}
-                          contentFit="cover"
-                          transition={200}
-                      />
-                  </View>
-                  <View className='items-center justify-center gap-4'>
-                    <TouchableOpacity onPress={handleSavePicture} className='w-[80vw] h-16 justify-center items-center border rounded-lg bg-accent-dark'>
-                      <Text className='text-black font-pmedium text-center text-lg'>Use Photo</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleRetake}>
-                    <View className='w-[78vw] h-16'>
-                      <Text className='text-center text-white font-pmedium text-lg'>Tap to retake</Text>
-                    </View>
-                    </TouchableOpacity>
-                  </View>
-                  {/* <View style={styles.previewButtons}>
-                      <TouchableOpacity
-                          style={[styles.previewButton, styles.retakeButton]}
-                          onPress={handleRetake}
-                      >
-                          <Text style={styles.buttonText}>Retake</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                          style={[styles.previewButton, styles.saveButton]}
-                          onPress={handleSavePicture}
-                      >
-                          <Text style={styles.buttonText}>Use Photo</Text>
-                      </TouchableOpacity>
-                  </View> */}
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.previewContainer}>
+          <View style={styles.previewImageContainer}>
+            <Image
+              source={{ uri: picture.uri }}
+              style={styles.previewImage}
+              contentFit="cover"
+              transition={200}
+            />
+          </View>
+          <View className='items-center justify-center gap-4'>
+            {isProcessing ? (
+              <View className='w-[80vw] h-32 justify-center items-center'>
+                <ActivityIndicator size="large" color="#fff" />
+                <Text className='text-white font-pmedium text-center text-lg mt-4'>
+                  {params.mode === 'health' ? 'Analyzing plant health...' : 'Identifying plant...'}
+                </Text>
               </View>
-          </SafeAreaView>
-      )
+            ) : (
+              <>
+                <TouchableOpacity 
+                  onPress={handleSavePicture} 
+                  disabled={isProcessing}
+                  className='w-[80vw] h-16 justify-center items-center border rounded-lg bg-accent-dark'
+                >
+                  <Text className='text-black font-pmedium text-center text-lg'>
+                    {params.mode === 'health' ? 'Check Health' : 'Identify Plant'}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleRetake} disabled={isProcessing}>
+                  <View className='w-[78vw] h-16'>
+                    <Text className='text-center text-white font-pmedium text-lg'>Tap to retake</Text>
+                  </View>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </SafeAreaView>
+    )
   }
 
   return (

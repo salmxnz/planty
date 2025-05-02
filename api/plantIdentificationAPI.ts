@@ -190,7 +190,7 @@ export const checkPlantHealthWithKindwise = async (imageBase64: string): Promise
     };
 
     const response = await axios.post(
-      'https://crop.kindwise.com/api/v1',
+      'https://crop.kindwise.com/api/v1/identification',
       requestData,
       {
         headers: {

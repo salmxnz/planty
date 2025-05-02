@@ -17,44 +17,74 @@ import { Ionicons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import Slider from '@react-native-community/slider'
 
+interface Plant {
+    id: string
+    name: string
+    slug: string
+    description: string
+    image_url: string
+    price: number
+    category_id: number
+    stock_quantity: number
+    care_level: string
+    light_requirements: string
+    water_frequency: string
+    pet_friendly: boolean
+}
+
 interface SearchBarProps {
     value: string
     handleChangeText: (value: string) => void
+    handleCategorySelect?: (categoryId: string) => void
+    activeCategory?: string
+    handleSizeSelect?: (size: string) => void
+    selectedSize?: string
+    handleCareLevelSelect?: (level: string) => void
+    selectedCareLevel?: string
+    priceRange?: number
+    handlePriceRangeChange?: (price: number) => void
+    handleClearAll?: () => void
+    filteredPlants?: Plant[]
 }
 
 // Sample suggested plants using actual project assets
 const suggestedPlants = [
     {
-        id: '1',
+        id: '2',
         name: 'Monstera Deliciosa',
+        slug: 'monstera-deliciosa',
         category: 'Indoor plants',
         image_url: require('../assets/images/plants/Monstera_Deliciosa.png'),
         care_level: 'Easy care',
     },
     {
-        id: '2',
+        id: '6',
         name: 'Snake Plant',
+        slug: 'snake-plant',
         category: 'Low light plants',
         image_url: require('../assets/images/plants/4x/Dracaena_trifasciata.png'),
         care_level: 'Very easy care',
     },
     {
-        id: '3',
+        id: '9',
         name: 'Chinese Fan Palm',
+        slug: 'chinese-fan-palm',
         category: 'Popular houseplants',
         image_url: require('../assets/images/plants/4x/Chinese_Fan_Palm_Livistona_CHinensis.png'),
         care_level: 'Moderate care',
     },
     {
-        id: '4',
+        id: '8',
         name: 'Lucky Bamboo',
+        slug: 'lucky-bamboo',
         category: 'Air purifying plants',
         image_url: require('../assets/images/plants/4x/Lucky_Bamboo_Dracaena_Sanderiana.png'),
         care_level: 'Easy to moderate',
     },
     {
-        id: '5',
+        id: '11',
         name: 'English Ivy',
+        slug: 'english-ivy',
         category: 'Trailing plants',
         image_url: require('../assets/images/plants/4x/English_Ivy.png'),
         care_level: 'Very easy care',
@@ -78,19 +108,23 @@ const sizeOptions = ['Small', 'Medium', 'Large']
 // Care level options
 const careLevelOptions = ['Easy', 'Moderate', 'Hard']
 
-const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
+const SearchBarMaximize = ({ 
+    value, 
+    handleChangeText,
+    handleCategorySelect,
+    activeCategory = '',
+    handleSizeSelect,
+    selectedSize = '',
+    handleCareLevelSelect,
+    selectedCareLevel = '',
+    priceRange = 5000,
+    handlePriceRangeChange,
+    handleClearAll,
+    filteredPlants = []
+}: SearchBarProps) => {
     const colorScheme = useColorScheme()
     const iconTintColor = colorScheme === 'dark' ? '#FFFFFF' : '#969ba3'
     const [modalVisible, setModalVisible] = useState(false)
-    const [activeCategory, setActiveCategory] = useState('')
-    const [selectedSize, setSelectedSize] = useState('')
-    const [selectedCareLevel, setSelectedCareLevel] = useState('')
-    const [priceRange, setPriceRange] = useState(5000)
-
-    const handleSearch = (text: string) => {
-        handleChangeText(text)
-        // Additional search functionality would go here
-    }
 
     const openSearchModal = () => {
         setModalVisible(true)
@@ -100,56 +134,66 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
         setModalVisible(false)
     }
 
-    const handleCategorySelect = (categoryId: string) => {
-        setActiveCategory(categoryId === activeCategory ? '' : categoryId)
-        // In a real app, you would filter results based on the selected category
+    // Use the passed handlers if available, otherwise use local state
+    const handleCategorySelectInternal = (categoryId: string) => {
+        if (handleCategorySelect) {
+            handleCategorySelect(categoryId)
+        }
     }
 
-    const handleSizeSelect = (size: string) => {
-        setSelectedSize(size === selectedSize ? '' : size)
+    const handleSizeSelectInternal = (size: string) => {
+        if (handleSizeSelect) {
+            handleSizeSelect(size)
+        }
     }
 
-    const handleCareLevelSelect = (level: string) => {
-        setSelectedCareLevel(level === selectedCareLevel ? '' : level)
+    const handleCareLevelSelectInternal = (level: string) => {
+        if (handleCareLevelSelect) {
+            handleCareLevelSelect(level)
+        }
     }
 
-    const handleClearAll = () => {
-        handleChangeText('')
-        setActiveCategory('')
-        setSelectedSize('')
-        setSelectedCareLevel('')
-        setPriceRange(5000)
+    const handlePriceRangeChangeInternal = (price: number) => {
+        if (handlePriceRangeChange) {
+            handlePriceRangeChange(price)
+        }
     }
 
-    const renderSuggestedItem = ({ item }: { item: any }) => (
-        <TouchableOpacity
-            className="flex-row items-center mb-6"
-            onPress={() => {
-                closeSearchModal()
-                // In a real app, you would navigate to the plant details page
-                // router.push(`/plant/${item.id}`);
-            }}
-        >
-            <View className="w-14 h-14 bg-[#f8f8f8] dark:bg-[#2a2a2a] rounded-lg items-center justify-center mr-4 overflow-hidden">
-                <Image
-                    source={item.image_url}
-                    className="w-12 h-12"
-                    resizeMode="contain"
-                />
-            </View>
-            <View className="flex-1">
-                <Text className="text-base font-pmedium text-primary-dark dark:text-white">
-                    {item.name}
-                </Text>
-                <Text className="text-sm font-pregular text-gray-500">
-                    {item.category}
-                </Text>
-            </View>
-            <Text className="text-xs font-pregular text-accent-dark">
-                {item.care_level}
-            </Text>
-        </TouchableOpacity>
-    )
+    const handleClearAllInternal = () => {
+        if (handleClearAll) {
+            handleClearAll()
+        } else {
+            handleChangeText('')
+        }
+        closeSearchModal()
+    }
+
+    // Navigate to search results with filters
+    const navigateToSearchResults = () => {
+        // Create a filter object to pass as URL parameters
+        const filters = {
+            term: value,
+            category: activeCategory,
+            size: selectedSize,
+            careLevel: selectedCareLevel,
+            price: priceRange.toString()
+        }
+        
+        // Convert filter object to URL-friendly query string
+        const queryParams = Object.entries(filters)
+            .filter(([_, val]) => val) // Remove empty values
+            .map(([key, val]) => `${key}=${encodeURIComponent(val)}`)
+            .join('&')
+        
+        // Close modal and navigate
+        closeSearchModal()
+        router.push(`/search/filters?${queryParams}`)
+    }
+
+    // Determine which plants to display in the results
+    const plantsToDisplay = filteredPlants && filteredPlants.length > 0 
+        ? filteredPlants 
+        : suggestedPlants
 
     return (
         <>
@@ -206,7 +250,7 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                 placeholder="Search for a plant"
                                 className="text-base font-pregular ml-3 text-gray-500 dark:text-primary-light flex-1"
                                 value={value}
-                                onChangeText={handleSearch}
+                                onChangeText={handleChangeText}
                                 placeholderTextColor="#969ba3"
                                 autoFocus
                             />
@@ -246,7 +290,7 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                     <TouchableOpacity
                                         key={category.id}
                                         onPress={() =>
-                                            handleCategorySelect(category.id)
+                                            handleCategorySelectInternal(category.id)
                                         }
                                         className={`mr-3 px-4 py-2 rounded-full flex-row items-center ${
                                             activeCategory === category.id
@@ -292,7 +336,7 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                         <TouchableOpacity
                                             key={index}
                                             onPress={() =>
-                                                handleSizeSelect(size)
+                                                handleSizeSelectInternal(size)
                                             }
                                             className={`mr-3 px-6 py-2 rounded-lg ${
                                                 selectedSize === size
@@ -323,7 +367,7 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                         maximumValue={5000}
                                         step={100}
                                         value={priceRange}
-                                        onValueChange={setPriceRange}
+                                        onValueChange={handlePriceRangeChangeInternal}
                                         minimumTrackTintColor={
                                             colorScheme === 'dark'
                                                 ? '#ffffff'
@@ -352,31 +396,6 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                             Rs 5000
                                         </Text>
                                     </View>
-
-                                    {/* Price selector buttons for quick selection */}
-                                    {/* <View className="flex-row justify-between mt-3">
-                      {[1000, 2000, 3000, 4000, 5000].map((price) => (
-                        <TouchableOpacity 
-                          key={price}
-                          onPress={() => setPriceRange(price)}
-                          className={`px-3 py-1 rounded-full ${
-                            Math.abs(priceRange - price) < 50
-                              ? 'bg-accent-dark' 
-                              : 'bg-[#eeeeee] dark:bg-[#1b1b1d]'
-                          }`}
-                        >
-                          <Text 
-                            className={`text-xs font-pregular ${
-                              Math.abs(priceRange - price) < 50
-                                ? 'text-white' 
-                                : 'text-gray-500 dark:text-primary-light'
-                            }`}
-                          >
-                            ₹{price}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
-                    </View> */}
                                 </View>
 
                                 {/* Care Level Filter */}
@@ -388,7 +407,7 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                         <TouchableOpacity
                                             key={index}
                                             onPress={() =>
-                                                handleCareLevelSelect(level)
+                                                handleCareLevelSelectInternal(level)
                                             }
                                             className={`mr-3 px-6 py-2 rounded-lg ${
                                                 selectedCareLevel === level
@@ -410,23 +429,51 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                 </View>
                             </View>
 
-                            {/* Suggested Plants Section */}
+                            {/* Plants Results Section */}
                             <Text className="text-lg font-pmedium text-primary-dark dark:text-white mb-4">
-                                Suggested plants
+                                {filteredPlants && filteredPlants.length > 0 
+                                    ? `Found ${filteredPlants.length} plants` 
+                                    : "Suggested plants"}
                             </Text>
-                            {suggestedPlants.map((item) => (
+                            
+                            {/* Display "No results" message if no plants match the filters */}
+                            {filteredPlants && filteredPlants.length === 0 && value.length > 0 && (
+                                <View className="items-center py-8">
+                                    <Ionicons 
+                                        name="search-outline" 
+                                        size={48} 
+                                        color={colorScheme === 'dark' ? '#555555' : '#DDDDDD'} 
+                                    />
+                                    <Text className="text-center text-gray-500 dark:text-gray-400 mt-4">
+                                        No plants match your search criteria.
+                                    </Text>
+                                    <TouchableOpacity 
+                                        className="mt-4" 
+                                        onPress={handleClearAllInternal}
+                                    >
+                                        <Text className="text-accent-light dark:text-accent-dark font-pmedium">
+                                            Clear filters
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            
+                            {/* Display plant results */}
+                            {plantsToDisplay.map((item: any) => (
                                 <TouchableOpacity
                                     key={item.id}
                                     className="flex-row items-center mb-6"
                                     onPress={() => {
                                         closeSearchModal()
-                                        // In a real app, you would navigate to the plant details page
-                                        // router.push(`/plant/${item.id}`);
+                                        // Navigate to plant details page
+                                        router.push(`/plant-details/${item.slug}`);
                                     }}
                                 >
                                     <View className="w-14 h-14 bg-[#f8f8f8] dark:bg-[#2a2a2a] rounded-lg items-center justify-center mr-4 overflow-hidden">
                                         <Image
-                                            source={item.image_url}
+                                            source={typeof item.image_url === 'string' 
+                                                ? { uri: item.image_url } 
+                                                : item.image_url}
                                             className="w-12 h-12"
                                             resizeMode="contain"
                                         />
@@ -436,10 +483,10 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                                             {item.name}
                                         </Text>
                                         <Text className="text-sm font-pregular text-gray-500">
-                                            {item.category}
+                                            {item.category || `Rs ${item.price}`}
                                         </Text>
                                     </View>
-                                    <Text className="text-xs font-pregular  text-accent-light dark:text-accent-dark">
+                                    <Text className="text-xs font-pregular text-accent-light dark:text-accent-dark">
                                         {item.care_level}
                                     </Text>
                                 </TouchableOpacity>
@@ -450,7 +497,7 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
                     {/* Bottom Action Buttons */}
                     <View className="absolute bottom-0 left-0 right-0 px-8 py-10 border-t border-gray-50 dark:border-gray-900 bg-primary-light dark:bg-primary-dark flex-row justify-between">
                         <TouchableOpacity
-                            onPress={handleClearAll}
+                            onPress={handleClearAllInternal}
                             className="py-4"
                         >
                             <Text className="text-base font-pmedium text-primary-dark dark:text-white underline">
@@ -460,10 +507,7 @@ const SearchBarMaximize = ({ value, handleChangeText }: SearchBarProps) => {
 
                         <TouchableOpacity
                             className="bg-accent-light dark:bg-accent-dark rounded-full px-8 py-4"
-                            onPress={() => {
-                                // In a real app, you would apply filters and search
-                                closeSearchModal()
-                            }}
+                            onPress={navigateToSearchResults}
                         >
                             <Text className="text-base font-pmedium text-white dark:text-black">
                                 Search

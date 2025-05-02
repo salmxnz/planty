@@ -24,14 +24,43 @@ interface Plant {
   pet_friendly: boolean
 }
 
-const Search = () => {
-  const { query } = useLocalSearchParams()
-  const searchQuery = decodeURIComponent(query as string)
+interface Filters {
+  term?: string
+  category?: string
+  size?: string
+  careLevel?: string
+  price?: string
+}
+
+const SearchFilters = () => {
+  const params = useLocalSearchParams()
   const colorScheme = useColorScheme()
+  
+  // Extract filter parameters
+  const filters: Filters = {
+    term: params.term as string,
+    category: params.category as string,
+    size: params.size as string,
+    careLevel: params.careLevel as string,
+    price: params.price as string
+  }
   
   const [loading, setLoading] = useState(true)
   const [plants, setPlants] = useState<Plant[]>([])
   const [filteredPlants, setFilteredPlants] = useState<Plant[]>([])
+
+  // Get filter description for display
+  const getFilterDescription = () => {
+    const activeFilters = []
+    
+    if (filters.category) activeFilters.push(`Category: ${filters.category}`)
+    if (filters.size) activeFilters.push(`Size: ${filters.size}`)
+    if (filters.careLevel) activeFilters.push(`Care: ${filters.careLevel}`)
+    if (filters.price) activeFilters.push(`Max Price: Rs ${filters.price}`)
+    
+    if (activeFilters.length === 0) return ''
+    return activeFilters.join(' • ')
+  }
 
   useEffect(() => {
     const fetchPlants = async () => {
@@ -40,13 +69,56 @@ const Search = () => {
         if (allPlants) {
           setPlants(allPlants as Plant[])
           
-          // Filter plants based on search query
-          const filtered = allPlants.filter((plant: Plant) => 
-            plant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            plant.description.toLowerCase().includes(searchQuery.toLowerCase())
-          )
+          // Apply all filters
+          let filtered = [...allPlants] as Plant[]
           
-          setFilteredPlants(filtered as Plant[])
+          // Filter by search term
+          if (filters.term) {
+            filtered = filtered.filter(plant => 
+              plant.name.toLowerCase().includes(filters.term?.toLowerCase() || '') ||
+              plant.description.toLowerCase().includes(filters.term?.toLowerCase() || '')
+            )
+          }
+          
+          // Filter by category
+          if (filters.category) {
+            const categoryId = parseInt(filters.category)
+            if (!isNaN(categoryId)) {
+              filtered = filtered.filter(plant => plant.category_id === categoryId)
+            }
+          }
+          
+          // Filter by size
+          if (filters.size) {
+            switch (filters.size) {
+              case 'Small':
+                filtered = filtered.filter(plant => plant.price < 1000)
+                break
+              case 'Medium':
+                filtered = filtered.filter(plant => plant.price >= 1000 && plant.price <= 3000)
+                break
+              case 'Large':
+                filtered = filtered.filter(plant => plant.price > 3000)
+                break
+            }
+          }
+          
+          // Filter by care level
+          if (filters.careLevel) {
+            filtered = filtered.filter(plant => 
+              plant.care_level.toLowerCase().includes(filters.careLevel?.toLowerCase() || '')
+            )
+          }
+          
+          // Filter by price
+          if (filters.price) {
+            const maxPrice = parseInt(filters.price)
+            if (!isNaN(maxPrice)) {
+              filtered = filtered.filter(plant => plant.price <= maxPrice)
+            }
+          }
+          
+          setFilteredPlants(filtered)
         }
       } catch (error) {
         console.error('Error fetching plants:', error)
@@ -56,7 +128,7 @@ const Search = () => {
     }
 
     fetchPlants()
-  }, [searchQuery])
+  }, [filters])
 
   if (loading) {
     return (
@@ -97,13 +169,20 @@ const Search = () => {
               />
             </TouchableOpacity>
             <Text className="text-2xl ml-5 font-pbold text-primary-dark dark:text-primary-light mb-1">
-              Search Results
+              {filters.term ? `"${filters.term}"` : 'Search Results'}
             </Text>
           </View>
+          
+          {getFilterDescription() && (
+            <Text className="text-sm mt-1 ml-11 font-pregular text-gray-500 dark:text-gray-400">
+              {getFilterDescription()}
+            </Text>
+          )}
+          
           <Text className="text-lg mt-3 ml-5 font-pmedium text-primary-dark dark:text-primary-light mb-1">
             {filteredPlants.length > 0 
-              ? `Found ${filteredPlants.length} plants matching "${searchQuery}"`
-              : `No plants found matching "${searchQuery}"`
+              ? `Found ${filteredPlants.length} plants`
+              : 'No plants match your filters'
             }
           </Text>
           
@@ -118,12 +197,12 @@ const Search = () => {
           ) : (
             <View className="mt-10 items-center justify-center px-6">
               <Ionicons 
-                name="search-outline" 
+                name="filter-outline" 
                 size={64} 
                 color={colorScheme === 'dark' ? '#555555' : '#DDDDDD'} 
               />
               <Text className="text-lg mt-4 font-pmedium text-gray-500 dark:text-gray-400 text-center">
-                Try searching for a different term or browse our categories
+                Try adjusting your filters to see more plants
               </Text>
               <TouchableOpacity
                 onPress={() => router.push('/explore')}
@@ -141,4 +220,4 @@ const Search = () => {
   )
 }
 
-export default Search
+export default SearchFilters

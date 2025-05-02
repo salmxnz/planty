@@ -33,8 +33,8 @@ export default function Profile() {
   // Mock data for followers/following
   const [stats] = useState({
     following: 6,
-    followers: 243,
-    likes: 14700
+    followers: 13,
+    likes: 3
   })
 
   // Initialize form data with context values
@@ -157,17 +157,17 @@ export default function Profile() {
         <View className="flex-row justify-between mb-6">
           <View className="items-center flex-1">
             <Text className="text-2xl font-pbold text-black dark:text-white">{stats.following}</Text>
-            <Text className="text-sm text-gray-500">Following</Text>
+            <Text className="text-sm text-gray-500">Purchases</Text>
           </View>
           
           <View className="items-center flex-1">
             <Text className="text-2xl font-pbold text-black dark:text-white">{stats.followers}</Text>
-            <Text className="text-sm text-gray-500">Followers</Text>
+            <Text className="text-sm text-gray-500">Listings</Text>
           </View>
           
           <View className="items-center flex-1">
-            <Text className="text-2xl font-pbold text-black dark:text-white">{(stats.likes / 1000).toFixed(1)}K</Text>
-            <Text className="text-sm text-gray-500">Likes</Text>
+            <Text className="text-2xl font-pbold text-black dark:text-white">{stats.likes}</Text>
+            <Text className="text-sm text-gray-500">Plants</Text>
           </View>
         </View>
         

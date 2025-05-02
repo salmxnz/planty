@@ -2,7 +2,7 @@ import { supabase } from "@/utils/supabase";
 
 //fetch categories function async
 const CategoriesFetch = async () => {
-    const {data: categories} = await supabase.from('categories').select('id, name, slug');
+    const {data: categories} = await supabase.from('categories').select('*');
     // console.log(categories);
     return categories;
 }
@@ -49,17 +49,16 @@ const PlantByFeaturesFetch = async (feature_id: number) => {
     const {data: plant_ids} = await supabase.from('featured_plants').select('plant_id').eq('feature_type_id', feature_id);
     console.log(plant_ids);
     
-    // Create an array of promises to fetch all plants
-    const plantPromises = plant_ids?.map(item => PlantFetchById(item.plant_id)) || [];
+    if (!plant_ids || plant_ids.length === 0) {
+        return [];
+    }
     
-    // Wait for all promises to resolve
-    const plantsResults = await Promise.all(plantPromises);
+    // Extract plant IDs from the result
+    const ids = plant_ids.map(item => item.plant_id);
     
-    // Flatten the array since PlantFetchById returns an array for each plant
-    const allPlants = plantsResults.flat();
-    
-    console.log(allPlants);
-    return allPlants;
+    // Fetch plants with these IDs
+    const {data: plants} = await supabase.from('plants').select('*').in('id', ids);
+    return plants;
 }
 
 const PlantFetchByTrait = async (trait: string, trait_value: string ) => {
@@ -68,5 +67,48 @@ const PlantFetchByTrait = async (trait: string, trait_value: string ) => {
     return plants;
 }
 
+// Function to fetch all plants for search functionality
+const AllPlantsFetch = async () => {
+    const { data: plants, error } = await supabase.from('plants').select('*');
+    
+    if (error) {
+        console.error('Error fetching all plants:', error);
+        return [];
+    }
+    
+    return plants || [];
+}
 
-export { FeaturesFetch, FeaturesFetchById, PlantFetchByTrait, CategoriesFetch, PlantsFetch, PlantsFetchByCategory, PlantDetailsFetch, PlantByFeaturesFetch };
+// Function to fetch a category name by its ID
+const CategoryNameFetchById = async (category_id: number) => {
+    try {
+        const { data, error } = await supabase
+            .from('categories')
+            .select('name')
+            .eq('id', category_id)
+            .single();
+        
+        if (error) {
+            console.error('Error fetching category name:', error);
+            return null;
+        }
+        
+        return data?.name || 'Unknown Category';
+    } catch (error) {
+        console.error('Exception fetching category name:', error);
+        return 'Unknown Category';
+    }
+}
+
+export { 
+    FeaturesFetch, 
+    FeaturesFetchById, 
+    PlantFetchByTrait, 
+    CategoriesFetch, 
+    PlantsFetch, 
+    PlantsFetchByCategory, 
+    PlantDetailsFetch, 
+    PlantByFeaturesFetch,
+    AllPlantsFetch,
+    CategoryNameFetchById
+};

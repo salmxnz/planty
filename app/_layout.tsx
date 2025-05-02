@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { AuthProvider } from '../context/AuthProvider';
+import { CartProvider } from '../context/CartProvider';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
@@ -37,19 +38,25 @@ const RootLayout = () => {
     <Provider store={store}>
       <NavigationContainer>
         <AuthProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="screens" options={{ headerShown: false }} />
-            <Stack.Screen name="plant-details" options={{ headerShown: false }} />
-            <Stack.Screen name="plant-details/[slug]" options={{ headerShown: false }} />
-            <Stack.Screen name="features" options={{ headerShown: false }} />
-            <Stack.Screen name="features/[id]" options={{ headerShown: false }} />
-            <Stack.Screen name="categories" options={{ headerShown: false }} />
-            <Stack.Screen name="categories/[id]" options={{ headerShown: false }} />
-          </Stack>
+          <CartProvider>
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="screens" options={{ headerShown: false }} />
+              <Stack.Screen name="plant-details" options={{ headerShown: false }} />
+              <Stack.Screen name="plant-details/[slug]" options={{ headerShown: false }} />
+              <Stack.Screen name="features" options={{ headerShown: false }} />
+              <Stack.Screen name="features/[id]" options={{ headerShown: false }} />
+              <Stack.Screen name="categories" options={{ headerShown: false }} />
+              <Stack.Screen name="categories/[id]" options={{ headerShown: false }} />
+              <Stack.Screen name="search" options={{ headerShown: false }} />
+              <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
+              <Stack.Screen name="search/filters" options={{ headerShown: false }} />
+              <Stack.Screen name="cart" options={{ headerShown: false }} />
+            </Stack>
+          </CartProvider>
         </AuthProvider>
       </NavigationContainer>
     </Provider>

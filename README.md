@@ -47,6 +47,12 @@ Planty is an AI-powered Android and iOS application built with React Native and 
   <img src="assets/screenshots/Explore Page +Advanced Filtering/Product_Details_Page.png" width="250" alt="Product Details">
 </div>
 
+### Shopping Cart
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <img src="assets/screenshots/Explore Page +Advanced Filtering/Cart_page.png" width="250" alt="Cart Page">
+  <img src="assets/screenshots/Explore Page +Advanced Filtering/cart_empty.png" width="250" alt="Empty Cart">
+</div>
+
 ### Chat
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
   <img src="assets/screenshots/chatbot/Messages.png" width="250" alt="Chat Bot">

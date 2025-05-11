@@ -238,7 +238,7 @@ const Explore = () => {
             <GestureHandlerRootView className="flex-1">
                 <ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
                     <View className="flex-1">
-                        {/* <View className="pt-20" /> */}
+                        <View className="pt-6" />
 
                         <View className="flex flex-row items-center justify-between w-full px-6">
                             <View>

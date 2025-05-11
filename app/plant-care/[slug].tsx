@@ -266,14 +266,14 @@ export default function PlantCareDetail() {
               color="skyblue" 
               bgColor="bg-sky-500/20" 
               onPress={handleWatering}
-              isActive={lastWatered && format(lastWatered, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')}
+              isActive={lastWatered ? format(lastWatered, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd') : undefined}
             />
             <CareActionButton 
               icon="sunny" 
               label="Light" 
               value={lightLevel} 
-              color="yellow" 
-              bgColor="bg-yellow-500/20" 
+              color="red" 
+              bgColor="bg-red-500/20" 
               onPress={() => {
                 const levels = ['Low', 'Medium', 'Sunny', 'Bright']
                 const currentIndex = levels.indexOf(lightLevel)
@@ -285,8 +285,8 @@ export default function PlantCareDetail() {
               icon="thermometer-outline" 
               label="Humidity" 
               value={`${humidityLevel}%`} 
-              color="yellow" 
-              bgColor="bg-green-500/60" 
+              color="green" 
+              bgColor="bg-green-500/30" 
               onPress={() => {
                 const levels = [50, 70, 90, 110, 130]
                 const currentIndex = levels.indexOf(humidityLevel)

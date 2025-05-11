@@ -14,3 +14,11 @@ node_modules
 # macOS system files
 .DS_Store
 **/.DS_Store
+
+# ios
+ios/
+ios/build
+ios/planty.xcodeproj
+
+# Expo
+.expo

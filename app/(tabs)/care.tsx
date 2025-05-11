@@ -31,10 +31,10 @@ const Care = () => {
   return (
     <SafeAreaView className="flex-1 bg-primary-light dark:bg-primary-dark" edges={['bottom', 'top']}>
       <GestureHandlerRootView className="flex-1">
-        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
             <View className="flex flex-row items-center justify-between w-full px-6">
               <View>
-                <Text className="text-primary-dark dark:text-white text-3xl font-psemibold">
+                <Text className="text-primary-dark dark:text-white text-3xl pt-10 font-psemibold">
                     Plant Care{' '}
                 </Text>
                 <View className="flex flex-row">

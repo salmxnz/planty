@@ -11,5 +11,8 @@ export default {
       kindwiseHealthKey: process.env.KINDWISE_HEALTH_KEY,
       plantNetApiKey: process.env.PLANT_NET_API_KEY,
     },
+    ios: {
+      bundleIdentifier: "com.salmxnz.planty"
+    },
   }
 };

@@ -21,4 +21,5 @@ ios/build
 ios/planty.xcodeproj
 
 # Expo
-.expo
+.expo/xcodebuild-error.log
+.expo/xcodebuild.log

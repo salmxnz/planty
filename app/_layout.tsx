@@ -7,7 +7,6 @@ import { useEffect } from 'react';
 import { AuthProvider } from '../context/AuthProvider';
 import { CartProvider } from '../context/CartProvider';
 import { UserPlantsProvider } from '../context/UserPlantsProvider';
-import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { store } from '../store/store';
 
@@ -37,7 +36,6 @@ const RootLayout = () => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
         <AuthProvider>
           <CartProvider>
             <UserPlantsProvider>
@@ -62,7 +60,6 @@ const RootLayout = () => {
             </UserPlantsProvider>
           </CartProvider>
         </AuthProvider>
-      </NavigationContainer>
     </Provider>
   );  
 };

@@ -25,6 +25,21 @@ const SignUp = () => {
         nameUser: '',
     })
     const [loading, setLoading] = useState(false)
+    const [passwordValidation, setPasswordValidation] = useState({
+        hasMinLength: false,
+        hasSpecialChar: false,
+        isValid: false
+    })
+    const [emailValidation, setEmailValidation] = useState({
+        isValid: false
+    })
+    const [passwordsMatch, setPasswordsMatch] = useState(false)
+    
+    // Check if all validations pass
+    const isFormValid = form.nameUser.trim() !== '' && 
+                       form.email.trim() !== '' && emailValidation.isValid && 
+                       form.password.trim() !== '' && passwordValidation.isValid && 
+                       form.confirmPassword.trim() !== '' && passwordsMatch
 
     useFocusEffect(
         useCallback(() => {
@@ -90,7 +105,7 @@ const SignUp = () => {
     return (
         <SafeAreaView className="bg-primary-light dark:bg-primary-dark flex-1">
             <GestureHandlerRootView className="flex-1">
-                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                <ScrollView contentContainerStyle={{ paddingVertical: 100, paddingBottom: 150}} showsVerticalScrollIndicator={false}>
                     <View className="flex-1 justify-center items-center px-6">
                         {/* <Image source={images.logo} className="w-[115px] h-[35px] self-center mb-8" resizeMode="contain" /> */}
                         <View className="w-full max-w-md">
@@ -110,7 +125,7 @@ const SignUp = () => {
                                     setForm({ ...form, nameUser: value })
                                 }
                                 placeholder="John Doe"
-                                otherStyles="mb-5"
+                                otherStyles="mb-4"
                                 keyboardType="default"
                                 textContentType="username"
                             />
@@ -118,53 +133,101 @@ const SignUp = () => {
                                 imageIcon="email"
                                 title="Email"
                                 value={form.email}
-                                handleChangeText={(value) =>
-                                    setForm({ ...form, email: value })
-                                }
+                                handleChangeText={(value) => {
+                                    setForm({ ...form, email: value });
+                                    
+                                    // Validate email format
+                                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                                    setEmailValidation({
+                                        isValid: emailRegex.test(value)
+                                    });
+                                }}
                                 placeholder="example@gmail.com"
-                                otherStyles="mb-5"
+                                otherStyles={form.email.length > 0 ? 'mb-2' : 'mb-4'}
                                 keyboardType="email-address"
                                 textContentType="emailAddress"
                             />
+                            {form.email.length > 0 && (
+                                <View className="mb-4">
+                                    <Text className={`text-sm ${emailValidation.isValid ? 'text-green-500' : 'text-red-500'}`}>
+                                        {emailValidation.isValid ? 
+                                            '• Valid email format ✓' : 
+                                            '• Must be a valid email (e.g., example@domain.com)'}
+                                    </Text>
+                                </View>
+                            )}
                             <FormField
                                 imageIcon="lock"
                                 title="Password"
                                 value={form.password}
-                                handleChangeText={(value) =>
-                                    setForm({ ...form, password: value })
-                                }
+                                handleChangeText={(value) => {
+                                    // Update form state
+                                    setForm({ ...form, password: value });
+                                    
+                                    // Validate password requirements
+                                    const hasMinLength = value.length >= 8;
+                                    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(value);
+                                    const isValid = hasMinLength && hasSpecialChar;
+                                    
+                                    // Update validation state
+                                    setPasswordValidation({
+                                        hasMinLength,
+                                        hasSpecialChar,
+                                        isValid
+                                    });
+                                }}
                                 placeholder="Enter your password"
-                                otherStyles="mb-5"
+                                otherStyles={form.password.length > 0 ? 'mb-2' : 'mb-6'}
                                 secureTextEntry
                                 isPassword={true}
                                 textContentType='password'
                             />
+                            {form.password.length > 0 && (
+                                <View className="mb-4">
+                                    <Text className={`text-sm ${passwordValidation.hasMinLength ? 'text-green-500' : 'text-red-500'}`}>
+                                        • Minimum 8 characters {passwordValidation.hasMinLength ? '✓' : ''}
+                                    </Text>
+                                    <Text className={`text-sm ${passwordValidation.hasSpecialChar ? 'text-green-500' : 'text-red-500'}`}>
+                                        • At least one special character {passwordValidation.hasSpecialChar ? '✓' : ''}
+                                    </Text>
+                                    {passwordValidation.isValid && (
+                                        <Text className="text-green-500 text-sm mt-1">Password meets all requirements</Text>
+                                    )}
+                                </View>
+                            )}
                             <FormField
                                 imageIcon="lock"
                                 title="Confirm Password"
                                 value={form.confirmPassword}
-                                handleChangeText={(value) =>
-                                    setForm({ ...form, confirmPassword: value })
-                                }
+                                handleChangeText={(value) => {
+                                    setForm({ ...form, confirmPassword: value });
+                                    
+                                    // Check if passwords match
+                                    setPasswordsMatch(form.password === value && value !== '');
+                                }}
                                 placeholder="Confirm your password"
-                                otherStyles="mb-6"
+                                otherStyles={form.confirmPassword.length > 0 ? 'mb-2' : 'mb-6'}
                                 secureTextEntry
                                 isPassword={true}
                                 textContentType='password'
                             />
+                            {form.confirmPassword.length > 0 && (
+                                <View className="mb-2">
+                                    <Text className={`text-sm ${passwordsMatch ? 'text-green-500' : 'text-red-500'}`}>
+                                        {passwordsMatch ? 
+                                            '• Passwords match ✓' : 
+                                            '• Passwords do not match'}
+                                    </Text>
+                                </View>
+                            )}
                             <CustomButton
                                 title={loading ? 'Loading...' : 'Register'}
                                 handlePress={handleSignUp}
                                 textStyles="text-white dark:text-primary-dark font-psemibold text-pregular text-[18px]"
-                                containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 w-full`}
-                                // disabled={
-                                //     !form.email ||
-                                //     !form.password ||
-                                //     !form.confirmPassword ||
-                                //     !form.nameUser ||
-                                //     form.password !== form.confirmPassword ||
-                                //     loading
-                                // }
+                                containerStyles={`bg-accent-light dark:bg-accent-dark rounded-xl min-h-[62px] justify-center items-center px-4 mt-6 w-full`}
+                                disabled={
+                                    !isFormValid || loading
+                                }
                             />
                             <View className="flex-row justify-center mt-6">
                                 <Text className="text-gray-500 dark:text-gray-300 font-pregular">
